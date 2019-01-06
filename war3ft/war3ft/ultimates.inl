@@ -5,10 +5,9 @@
 // This is ran every second...
 public _ULT_Delay()
 {
-	
 	// Decrement the global counter
 	g_iUltimateDelay--;
-	
+
 	// Now we need to loop through all players and decrement their ultimate delay
 	new players[32], numplayers, i, id;
 	get_players( players, numplayers );
@@ -31,7 +30,7 @@ public _ULT_Delay()
 ULT_ResetCooldown( id, iTime, iHideIcon = true )
 {
 	p_data[id][P_ULTIMATEDELAY]		= iTime;
-	
+
 	// Hide the user's ultimate icon
 	if ( iHideIcon )
 	{
@@ -47,7 +46,7 @@ ULT_IconHandler( id )
 	{
 		return;
 	}
-	
+
 	new bool:bShowIcon = true;
 
 	// User has no ultimate!
@@ -56,31 +55,26 @@ ULT_IconHandler( id )
 	{
 		bShowIcon = false;
 	}
-
 	// In global delay - can't show icon!
 	else if ( g_iUltimateDelay > 0 )
 	{
 		bShowIcon = false;
 	}
-
 	// User's delay is longer!
 	else if ( p_data[id][P_ULTIMATEDELAY] > 0 )
 	{
 		bShowIcon = false;
 	}
-
 	// User is dead - don't show icon!
 	else if ( !is_user_alive( id ) )
 	{
 		bShowIcon = false;
 	}
-
 	// User isn't connected! - don't show icon!
 	else if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
 		bShowIcon = false;
 	}
-
 
 	// We need to hide the user's icon!
 	if ( !bShowIcon )
@@ -88,16 +82,15 @@ ULT_IconHandler( id )
 		// In theory I could remember what was displayed when - but easy way out is this
 		ULT_ClearIcons( id );
 	}
-
 	// Show the user's icon!
 	else
 	{
 		// Play the ultimate ready sound
 		client_cmd( id, "speak %s", g_szSounds[SOUND_ULTIMATEREADY] )
-		
+
 		// Give the user a graphical message that their ultimate is ready
 		WC3_StatusText( id, TXT_ULTIMATE, "%L", id, "ULTIMATE_READY" );
-		
+
 		// Show their ultimate icon
 		ULT_Icon( id, ICON_SHOW );
 	}
@@ -106,7 +99,6 @@ ULT_IconHandler( id )
 // This function will display/flash/hide the race's ultimate icon on the screen
 ULT_Icon( id, flag )
 {
-	
 	// DOD does not support ultimate icons :/
 	if ( g_MOD == GAME_DOD )
 	{
@@ -120,7 +112,7 @@ ULT_Icon( id, flag )
 	}
 
 	new iRaceID = p_data[id][P_RACE];
-	
+
 	// If we're chameleon we need to display the icon of the ultimate we have
 	if ( p_data[id][P_RACE] == RACE_CHAMELEON )
 	{
@@ -128,7 +120,7 @@ ULT_Icon( id, flag )
 
 		iRaceID = g_SkillOwner[iChamUltimate];
 	}
-	
+
 	// We should only do this if we have a valid race ID
 	if ( iRaceID )
 	{
@@ -146,7 +138,7 @@ ULT_Icon( id, flag )
 			case 7: r=255,	g=0,	b=0;		// Warden
 			case 8: r=0,	g=255,	b=0;		// Crypt Lord
 		}
-			
+
 		// Special circumstances should be done here
 		switch ( flag )
 		{
@@ -169,7 +161,6 @@ ULT_Icon( id, flag )
 		{
 			g_ULT_iLastIconShown[id] = iRaceID;
 		}
-
 		// No icon shown
 		else if ( flag == ICON_HIDE )
 		{
@@ -188,7 +179,7 @@ ULT_ClearIcons( id )
 		{
 			Create_StatusIcon( id, ICON_HIDE, g_UltimateIcons[g_ULT_iLastIconShown[id]-1], 0, 0, 0 );
 		}
-		
+
 		/*
 		// Loop through all possible icons and remove them
 		for ( new i = 0; i < MAX_RACES - 1; i++ )
@@ -200,13 +191,12 @@ ULT_ClearIcons( id )
 
 ULT_Available( id )
 {
-
 	// User needs ult + can't have it used + can't have a delay + can't have a global delay
 	if ( p_data[id][P_ULTIMATEDELAY] <= 0 && g_iUltimateDelay <= 0 )
 	{
 		new iSkillID = SM_GetSkillOfType( id, SKILL_TYPE_ULTIMATE );
 		new iSkillLevel = SM_GetSkillLevel( id, iSkillID, 7 );
-		
+
 		if ( iSkillLevel > 0 )
 		{
 			return true;
@@ -236,7 +226,6 @@ bool:ULT_CanUserBlockUlt( id )
 
 ULT_RemoveCharge( id, iFuncID )
 {
-
 	if ( ITEM_Has( id, ITEM_NECKLACE ) > ITEM_NONE )
 	{
 		ITEM_RemoveCharge( id, ITEM_NECKLACE );
@@ -267,27 +256,27 @@ public _ULT_Ping( parm[] )
 {
 	new id = parm[0];
 	new iTimeLeft = parm[1];
-	
+
 	// Decrement our timer
 	parm[1]--;
-	
+
 	// User died or diconnected
 	if ( !p_data_b[id][PB_ISCONNECTED] || !is_user_alive( id ) )
 	{
 		p_data_b[id][PB_ISSEARCHING] = false;
 	}
-	
+
 	// This is the last "playing" of the sound, no target was found :/
 	if ( iTimeLeft == 0 )
 	{
 		p_data_b[id][PB_ISSEARCHING] = false;
-		
+
 		if ( ULT_Available( id ) )
 		{
 			ULT_Icon( id, ICON_SHOW );
 		}
 	}
-	
+
 	// Then we need to play the sound + flash their icon!
 	if ( p_data_b[id][PB_ISSEARCHING] )
 	{
@@ -315,7 +304,7 @@ ULT_Reset( id )
 
 	// Stop the ultimate cooldowns since they will reset at round start
 	task_exists( TASK_UDELAY + id )			? remove_task( TASK_UDELAY + id ) : 0;
-	
+
 	// Reset Big Bad Voodoo
 	if ( task_exists( TASK_RESETGOD + id ) )
 	{
@@ -323,7 +312,7 @@ ULT_Reset( id )
 
 		SH_Ult_Remove( id );
 	}
-	
+
 	// Set this to false to stop searching ultimates (used by NE + ORC + BM ultimates)
 	p_data_b[id][PB_ISSEARCHING] = false;
 

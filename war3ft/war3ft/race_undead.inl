@@ -9,7 +9,6 @@
 
 UD_Suicide( id )
 {
-	
 	// Ultimate has been used, so we can't use it again!
 	if ( !ULT_Available( id ) )
 	{
@@ -37,14 +36,13 @@ UD_Suicide( id )
 	// Set up the tasks to damage + draw effects
 	set_task( 0.5, "_UD_SuicideExplode", TASK_EXPLOSION + id, parm, 5 );
 	set_task( 0.5, "_UD_SuicideBlastCircles", TASK_BEAMCYLINDER + id, parm, 5 );
-	
+
 	// Create an implosion effect where they died
 	Create_TE_IMPLOSION( vOrigin, 100, 20, 5 );
-	
+
 	// Set up an ultimate delay (in case the user respawns)
 	ULT_ResetCooldown( id, get_pcvar_num( CVAR_wc3_ult_cooldown ) );
 }
-
 
 // This is only use in _UD_SuicideExplode so declaring it here should be fine
 new bool:bIgnoreDmg[33] = false;
@@ -69,9 +67,9 @@ public _UD_SuicideExplode( parm[5] )
 	vPosition[0] = vOrigin[0] + random_num( -100, 100 );
 	vPosition[1] = vOrigin[1] + random_num( -100, 100 );
 	vPosition[2] = vOrigin[2] + random_num( -50, 50 );
-	
+
 	Create_TE_EXPLOSION( vOrigin, vPosition, g_iSprites[SPR_FIREBALL], (random_num(0,20) + 20), 12, TE_EXPLFLAG_NONE );
-	
+
 	// This doesn't look correct in Day of Defeat, so lets only do it for CS/CZ
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
@@ -84,18 +82,18 @@ public _UD_SuicideExplode( parm[5] )
 	new i, iTargetID, vTargetOrigin[3], iDamage, iDistance;
 	new iMultiplier = ( EXPLOSION_MAX_DAMAGE * EXPLOSION_MAX_DAMAGE ) / EXPLOSION_RANGE;
 	new iTeam = get_user_team( id );
-	
+
 	// Check all players and see if they should be damaged
 	for ( i = 0; i < numberofplayers; i++ )
 	{
 		iTargetID = players[i];
-		
+
 		// Get origin of target
 		get_user_origin( iTargetID, vTargetOrigin );
 
 		// Get distance in b/t target and caster
 		iDistance = get_distance( vOrigin, vTargetOrigin );
-		
+
 		// Make sure this user is close enough to do damage + isn't immune + isn't on the same team + isn't already immune to all damage
 		if ( iDistance < EXPLOSION_RANGE && iTeam != get_user_team( iTargetID ) && !bIgnoreDmg[iTargetID] )
 		{
@@ -105,21 +103,21 @@ public _UD_SuicideExplode( parm[5] )
 				ULT_RemoveCharge( iTargetID, 5 );
 
 				ULT_Blocked( id );
-				
+
 				bIgnoreDmg[iTargetID] = true;
 			}
-			
+
 			// The user isn't immune!
 			else
 			{
-			
+
 				// Calculate the damage to be done
 				iDamage = ( EXPLOSION_RANGE - iDistance) * iMultiplier;
 				iDamage = sqroot( iDamage );
-				
+
 				// Damage them!!!!
 				WC3_Damage( iTargetID, id, iDamage, CSW_SUICIDE, -1 );
-				
+
 				// Lets shake up their screen a bit
 				Create_ScreenShake( iTargetID, (1<<14), (1<<13), (1<<14) );
 			}
@@ -133,7 +131,7 @@ public _UD_SuicideExplode( parm[5] )
 	}
 
 	--parm[1];
-	
+
 	// Lets keep going if we have some left!
 	if ( parm[1] > 0 )
 	{
@@ -180,7 +178,7 @@ UD_SkillsOffensive( iAttacker, iDamage )
 		iHealth		= get_user_health( iAttacker );
 		iMaxHealth	= get_user_maxhealth( iAttacker );
 		iBonusHealth = floatround( float( iDamage ) * p_vampiric[iSkillLevel-1] );
-		
+
 		// Give the user health!
 		if ( iHealth < iMaxHealth )
 		{
@@ -199,10 +197,10 @@ UD_SkillsOffensive( iAttacker, iDamage )
 				set_user_health( iAttacker, iHealth + iBonusHealth );
 			}
 		}
-		
+
 		// Make the attacker glow
 		SHARED_Glow( iAttacker, 0, ( 2 * iBonusHealth ), 0, 0 );
-		
+
 		// Give the attacker a nice screen fade
 		Create_ScreenFade( iAttacker, (1<<10), (1<<10), (1<<12), 0, 255, 0, iBonusHealth );
 	}

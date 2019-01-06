@@ -4,7 +4,7 @@
 
 #define TOTAL_TABLES		7
 
-new const szTables[TOTAL_TABLES][] = 
+new const szTables[TOTAL_TABLES][] =
 {
 	"CREATE TABLE IF NOT EXISTS `wc3_player` ( `player_id` int(8) unsigned NOT NULL auto_increment, `player_steamid` varchar(25) NOT NULL default '', `player_ip` varchar(20) NOT NULL default '', `player_name` varchar(35) NOT NULL default '', `time` timestamp(14) NOT NULL, PRIMARY KEY  (`player_id`), KEY `player_name` (`player_name`), KEY `player_ip` (`player_ip`), KEY `player_steamid` (`player_steamid`) ) TYPE=MyISAM;",
 	"CREATE TABLE IF NOT EXISTS `wc3_player_extra` ( `player_id` INT( 8 ) UNSIGNED NOT NULL , `player_steamid` VARCHAR( 25 ) NOT NULL , `player_ip` VARCHAR( 20 ) NOT NULL , `player_name` VARCHAR( 35 ) NOT NULL , PRIMARY KEY ( `player_id` )) TYPE=MyISAM ;",
@@ -132,7 +132,7 @@ MYSQLX_FetchUniqueID( id )
 		g_iDBPlayerUniqueID[id] = SQL_GetInsertId( query );
 
 		// Since we have the ID - lets insert extra data here...
-		//  Basically insert whatever data we don't have yet on this player in the extra table 
+		//  Basically insert whatever data we don't have yet on this player in the extra table
 		//  (this will only be used for the webpage)
 		new szName[70], szSteamID[30], szIP[20];
 		get_user_name( id, szName, 69 );
@@ -197,7 +197,7 @@ MYSQLX_Save( id )
 	}
 
 	static iCurrentLevel;
-	
+
 	// Only save skill levels if the user does NOT play chameleon
 	if ( p_data[id][P_RACE] != RACE_CHAMELEON )
 	{
@@ -207,27 +207,27 @@ MYSQLX_Save( id )
 			if ( g_SkillType[iSkillID] != SKILL_TYPE_PASSIVE )
 			{
 				iCurrentLevel = SM_GetSkillLevel( id, iSkillID, 14 );
-	
+
 				// Then we need to save this!
 				if ( iCurrentLevel >= 0 && g_iDBPlayerSkillStore[id][iSkillID] != iCurrentLevel )
 				{
 					g_iDBPlayerSkillStore[id][iSkillID] = iCurrentLevel;
 					format( szQuery, 511, "REPLACE INTO `wc3_player_skill` ( `player_id` , `skill_id` , `skill_level` ) VALUES ( '%d', '%d', '%d' );", iUniqueID, iSkillID, iCurrentLevel );
 					query = SQL_PrepareQuery( g_DBConn, szQuery );
-	
+
 					if ( !SQL_Execute( query ) )
 					{
 						client_print( id, print_chat, "%s Error, unable to save your XP, please contact a server administrator", g_MODclient );
-	
+
 						MYSQLX_Error( query, szQuery, 5 );
-	
+
 						return;
 					}
 				}
 			}
 		}
 	}
-	
+
 	return;
 }
 
@@ -268,7 +268,7 @@ MYSQLX_Save_T( id )
 			if ( g_SkillType[iSkillID] != SKILL_TYPE_PASSIVE )
 			{
 				iCurrentLevel = SM_GetSkillLevel( id, iSkillID, 15 );
-	
+
 				// Then we need to save this!
 				if ( iCurrentLevel >= 0 && g_iDBPlayerSkillStore[id][iSkillID] != iCurrentLevel )
 				{
@@ -279,7 +279,7 @@ MYSQLX_Save_T( id )
 			}
 		}
 	}
-	
+
 	return;
 }
 
@@ -291,7 +291,7 @@ public _MYSQLX_Save_T( failstate, Handle:query, error[], errnum, data[], size )
 	{
 		new szQuery[256];
 		SQL_GetQueryString( query, szQuery, 255 );
-		
+
 		MYSQLX_ThreadError( query, szQuery, error, errnum, failstate, 1 );
 	}
 }
@@ -303,7 +303,7 @@ MYSQLX_GetAllXP( id )
 	{
 		return;
 	}
-	
+
 	new iUniqueID = DB_GetUniqueID( id );
 
 	// Then we have a problem and cannot retreive the user's XP
@@ -343,7 +343,7 @@ MYSQLX_GetAllXP( id )
 	{
 		iRace	= SQL_ReadResult( query, 0 );
 		iXP		= SQL_ReadResult( query, 1 );
-		
+
 		// Save the user's XP in an array
 		if ( iRace > 0 && iRace < MAX_RACES + 1 )
 		{
@@ -395,7 +395,7 @@ MYSQLX_SetDataForRace( id )
 			SM_SetSkillLevel( id, iSkillID, 0, 2 );
 		}
 	}
-	
+
 	new iSkillID, iSkillLevel;
 	// While we have a result!
 	while ( SQL_MoreResults( query ) )
@@ -410,13 +410,12 @@ MYSQLX_SetDataForRace( id )
 
 	// Free the handle
 	SQL_FreeHandle( query );
-	
+
 	// Set the race up
 	WC3_SetRaceUp( id );
 
 	// This user's XP has been set + retrieved! We can save now
 	bDBXPRetrieved[id] = true;
-
 
 	return;
 }
@@ -469,7 +468,7 @@ MYSQLX_ThreadError( Handle:query, szQuery[], szError[], iErrNum, failstate, id )
 
 	// Connection failed
 	if ( failstate == TQUERY_CONNECT_FAILED )
-	{	
+	{
 		WC3_Log( true, "[MYSQLX] Fail state: Connection Failed" );
 	}
 
@@ -497,7 +496,7 @@ MYSQLX_UpdateTimestamp( id )
 	new szQuery[256];
 	format( szQuery, 255, "UPDATE `wc3_player` SET time = NOW() WHERE ( `player_id` = '%d' );", DB_GetUniqueID( id ) );
 
-	SQL_ThreadQuery( g_DBTuple, "_MYSQLX_UpdateTimestamp", szQuery );	
+	SQL_ThreadQuery( g_DBTuple, "_MYSQLX_UpdateTimestamp", szQuery );
 }
 
 public _MYSQLX_UpdateTimestamp( failstate, Handle:query, error[], errnum, data[], size )
@@ -507,7 +506,7 @@ public _MYSQLX_UpdateTimestamp( failstate, Handle:query, error[], errnum, data[]
 	{
 		new szQuery[256];
 		SQL_GetQueryString( query, szQuery, 255 );
-		
+
 		MYSQLX_ThreadError( query, szQuery, error, errnum, failstate, 4 );
 	}
 
@@ -523,14 +522,12 @@ public _MYSQLX_UpdateTimestamp( failstate, Handle:query, error[], errnum, data[]
 
 MYSQLX_UpdateWebTable()
 {
-
 	// Make sure our connection is working
 	if ( !MYSQLX_Connection_Available() )
 	{
 		return;
 	}
 
-	
 	new szQuery[1024], Handle:query;
 
 	// No matter what always update the XP levels
@@ -546,8 +543,6 @@ MYSQLX_UpdateWebTable()
 			return;
 		}
 	}
-
-
 
 	// Check to see if we even need an update!
 	formatex ( szQuery, 255, "SELECT `config_value` FROM `wc3_config` WHERE `config_id` = 'version' AND `config_value` = '%s';", WC3FT_VERSION );
@@ -577,14 +572,14 @@ MYSQLX_UpdateWebTable()
 		// Insert current version!
 		formatex ( szQuery, 1023, "REPLACE INTO `wc3_config` ( `config_id` , `config_value` ) VALUES ( 'version', '%s' );", WC3FT_VERSION );
 		query = SQL_PrepareQuery( g_DBConn, szQuery );
-		
+
 		if ( !SQL_Execute( query ) )
 		{
 			MYSQLX_Error( query, szQuery, 8 );
 
 			return;
 		}
-		
+
 		// Now lets add the language information to the DB!
 		new iTotalLanguages = get_langsnum();
 		new lang[3], iLang, i;
@@ -594,7 +589,7 @@ MYSQLX_UpdateWebTable()
 		for ( iLang = 0; iLang < iTotalLanguages; iLang++ )
 		{
 			get_lang ( iLang, lang );
-			
+
 			// We have a valid language
 			if ( lang_exists( lang ) )
 			{
@@ -624,7 +619,7 @@ MYSQLX_UpdateWebTable()
 					DB_FormatString( szDescription, 511 );
 
 					formatex( szQuery, 1023, "REPLACE INTO `wc3_web_skill` ( `skill_id` , `skill_lang` , `skill_name`, `skill_description`, `skill_type`, `skill_owner` ) VALUES ( '%d', '%s', '%s', '%s', '%d', '%d' );", i, lang, szName, szDescription, g_SkillType[i], g_SkillOwner[i] );
-					
+
 					query = SQL_PrepareQuery( g_DBConn, szQuery );
 
 					if ( !SQL_Execute( query ) )
@@ -650,29 +645,26 @@ MYSQLX_Prune()
 		return;
 	}
 
-	new const szPruneQuery[MYSQL_TOTAL_PRUNE_QUERY][] = 
+	new const szPruneQuery[MYSQL_TOTAL_PRUNE_QUERY][] =
 	{
 		"DELETE FROM wc3_player_race  WHERE player_id IN ( SELECT `player_id` FROM `wc3_player` WHERE ( DATE_SUB(CURDATE(), INTERVAL %d DAY) > time ) )",
 		"DELETE FROM wc3_player_skill WHERE player_id IN ( SELECT `player_id` FROM `wc3_player` WHERE ( DATE_SUB(CURDATE(), INTERVAL %d DAY) > time ) );"
 	};
 
-
 	/*
 	CREATE TEMPORARY TABLE `wc3_expired` SELECT * FROM wc3_player WHERE ( DATE_SUB(CURDATE(), INTERVAL 10 DAY) > `time` );# Affected rows: 4179
 	DELETE `wc3_player_race` FROM `wc3_player_race` INNER JOIN wc3_expired ON wc3_player_race.player_id = wc3_expired.player_id;# MySQL returned an empty result set (i.e. zero rows).
 
+	CREATE TEMPORARY TABLE tmptable
+	SELECT A.* FROM table1 AS A, table1 AS B
+	WHERE A.username LIKE '%2'
+	AND A.ID = B.ID
+	AND A.username <> B.username;
 
-
-CREATE TEMPORARY TABLE tmptable
-SELECT A.* FROM table1 AS A, table1 AS B
-WHERE A.username LIKE '%2'
-AND A.ID = B.ID
-AND A.username <> B.username;
-
-DELETE table1 FROM table1
-INNER JOIN tmptable
-ON table1.username = tmptable.username;
-*/
+	DELETE table1 FROM table1
+	INNER JOIN tmptable
+	ON table1.username = tmptable.username;
+	*/
 
 	//SELECT `wc3_player`.`player_id` FROM `wc3_player` WHERE ( DATE_SUB(CURDATE(), INTERVAL 14 DAY) > `wc3_player`.`time` )
 
@@ -705,12 +697,12 @@ MYSQLX_Convert()
 		return;
 	}
 
-	new const szConversionQuery[MYSQL_TOTAL_CONVERSION_QUERY][] = 
+	new const szConversionQuery[MYSQL_TOTAL_CONVERSION_QUERY][] =
 	{
 		"INSERT INTO wc3_player select '', playerid, playerip, playername, time FROM `war3users` GROUP BY playerid;",
 		"INSERT INTO wc3_player_race select wc3_player.player_id, war3users.race, war3users.xp FROM `wc3_player`, `war3users` WHERE wc3_player.player_steamid=war3users.playerid;"
 	};
-	
+
 	new szQuery[256], Handle:query;
 
 
@@ -757,7 +749,6 @@ MYSQLX_Convert()
 
 		return;
 	}
-
 	// We haven't ran the conversion yet - run it!
 	else
 	{
@@ -767,7 +758,7 @@ MYSQLX_Convert()
 		// Insert that we ran the conversion!
 		formatex ( szQuery, 255, "REPLACE INTO `wc3_config` ( `config_id` , `config_value` ) VALUES ( 'sql_conversion', '1' );" );
 		query = SQL_PrepareQuery( g_DBConn, szQuery );
-		
+
 		if ( !SQL_Execute( query ) )
 		{
 			MYSQLX_Error( query, szQuery, 14 );

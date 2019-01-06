@@ -2,12 +2,11 @@
 // Forwards from the CSX module and DODX module
 public grenade_throw( index, greindex, wId )
 {
-	
 	if ( !WC3_Check() )
 	{
 		return;
 	}
-	
+
 	// If user isn't alive do nothing!
 	if ( !is_user_alive( index ) )
 	{
@@ -26,7 +25,6 @@ public grenade_throw( index, greindex, wId )
 	// Make sure the user has the skill and we actually have a grenade index
 	if ( greindex && iSkillLevel > 0 )
 	{
-		
 		// Then Critical Grenades are allowed
 		if ( OR_CriticalGrenadeAllowed( index ) )
 		{
@@ -40,16 +38,15 @@ public grenade_throw( index, greindex, wId )
 			}
 		}
 	}
+	
 	return;
 }
 
 // HamSandwich implementation
 public EVENT_TakeDamage( iVictim, inflictor, iAttacker, Float:f_Damage, damagetype )
 {
-
 	static s_Classname[ 8 ];
 	pev ( inflictor, pev_classname, s_Classname, charsmax ( s_Classname ) );
-
 
 	new s_PlayerName[32], s_PlayerName2[32];
 
@@ -58,7 +55,7 @@ public EVENT_TakeDamage( iVictim, inflictor, iAttacker, Float:f_Damage, damagety
 
 	//server_print( "%s:%d attack's %s:%d for %0.0f damage with %s:%d", s_PlayerName2, iAttacker, s_PlayerName, iVictim, f_Damage, s_Classname, inflictor );
 
-      
+
 /*	client_print( iAttacker, print_chat, "Damage: %f0.0, Victim: %d, Inflictor: %d (%s)", iDamage, iVictim, inflictor, s_Classname );
 	client_print( iVictim, print_chat, "Damage: %f0.0, iAttacker: %d, Inflictor: %d (%s)", iDamage, iAttacker, inflictor, s_Classname );
 
@@ -67,13 +64,11 @@ public EVENT_TakeDamage( iVictim, inflictor, iAttacker, Float:f_Damage, damagety
 */
 	//return HAM_SUPERCEDE
 
-
 	return HAM_IGNORED;
 }
 
 public client_damage( iAttacker, iVictim, iDamage, iWeapon, iHitPlace, TA )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
@@ -84,7 +79,7 @@ public client_damage( iAttacker, iVictim, iDamage, iWeapon, iHitPlace, TA )
 	{
 		return;
 	}
-	
+
 	g_iDamageDealt[iAttacker][iVictim] += iDamage;
 
 	// Bot should "auto" cast his/her ultimate on random
@@ -93,12 +88,10 @@ public client_damage( iAttacker, iVictim, iDamage, iWeapon, iHitPlace, TA )
 		// Check for an actual ultimate is done in this function, why do it twice?
 		cmd_Ultimate( iAttacker );
 	}
-	
 
 	// We need to make sure that we have a valid attacker and the user isn't hexed
 	if ( SHARED_ValidPlayer( iAttacker ) && !p_data_b[iAttacker][PB_HEXED] )
 	{
-
 		// Run the offensive spells
 		UD_SkillsOffensive( iAttacker, iDamage );
 		HU_SkillsOffensive( iAttacker, iVictim );
@@ -138,14 +131,12 @@ public client_death( iAttacker, iVictim, iWeapon, hitplace, TK )
 	// Counter-Strike and Condition Zero Checks
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
-
 		// Check out who the inflictor was
 		new iInflictor = entity_get_edict( iVictim, EV_ENT_dmg_inflictor );
 
 		// Check to see if the death was from the bomb
 		if ( !SHARED_ValidPlayer( iInflictor ) && iWeapon != CSW_HEGRENADE && iInflictor )
 		{
-			
 			if ( is_valid_ent ( iInflictor ) )
 			{
 				new szClassName[64];
@@ -171,12 +162,11 @@ public client_death( iAttacker, iVictim, iWeapon, hitplace, TK )
 
 public on_Death( iVictim, iAttacker, iWeaponID, iHeadshot )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
 	}
-	
+
 	// Counter-Strike and Condition Zero Checks
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
@@ -197,11 +187,11 @@ public on_Death( iVictim, iAttacker, iWeaponID, iHeadshot )
 
 		// Save the number of flash grenades the user has
 		p_data[iVictim][P_FLASHCOUNT]		= cs_get_user_bpammo( iVictim, CSW_FLASHBANG );
-		
+
 		// Check to see if weapons were silenced on death
 		new iWeaponUSPEnt = find_ent_by_owner( -1, "weapon_usp", iVictim );
 		new iWeaponM4A1Ent = find_ent_by_owner( -1, "weapon_m4a1", iVictim );
-		
+
 		if ( is_valid_ent( iWeaponUSPEnt ) )
 		{
 			p_data_b[iVictim][PB_USP_SILENCED]	= cs_get_weapon_silen( iWeaponUSPEnt ) ? true : false;
@@ -211,7 +201,6 @@ public on_Death( iVictim, iAttacker, iWeaponID, iHeadshot )
 		{
 			p_data_b[iVictim][PB_M4A1_SILENCED]	= cs_get_weapon_silen( iWeaponM4A1Ent ) ? true : false;
 		}
-
 
 		// Check to see if weapons were in burst mode on death
 		new iWeaponGlock18Ent = find_ent_by_owner( -1, "weapon_glock18", iVictim );
@@ -227,24 +216,22 @@ public on_Death( iVictim, iAttacker, iWeaponID, iHeadshot )
 			p_data_b[iVictim][PB_FAMAS_BURST]	= cs_get_weapon_burst( iWeaponFamasEnt ) ? true : false;
 		}
 	}
-	
+
 	// Day of Defeat Checks
 	else if ( g_MOD == GAME_DOD )
 	{
-
 		// Save the user's origin for reincarnation
 		get_user_origin( iVictim, iReincarnation[iVictim] );
 	}
 
 	WC3_Death( iVictim, iAttacker, iWeaponID, iHeadshot );
-	
+
 	return;
 }
 
 // Hook for CS/CZ
 public on_DeathMsg()
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
@@ -257,7 +244,7 @@ public on_DeathMsg()
 	get_user_attacker( iVictim, iWeaponID );
 
 	on_Death( iVictim, iAttacker, iWeaponID, iHeadshot );
-	
+
 	return;
 }
 
@@ -283,27 +270,26 @@ public on_CurWeapon( id )
 
 	// Record the last time a shot was fired
 	fLastShotFired[id] = halflife_time();
-	
+
 	// Save the user's weapons
 	SHARED_SaveWeapons( id );
 
 	// Set the fuse for the weapon in DOD
 	if ( g_MOD == GAME_DOD )
 	{
-
 		// Critical Grenade
 		if ( SM_GetSkillLevel( id, SKILL_CRITICALGRENADE ) > 0 && SHARED_HasGrenade( id ) )
 		{
 			dod_set_fuse( id, FUSE_SET, 2.0, FT_NEW );
 		}
 	}
-	
+
 	// We only need to run these functions if the user's weapon has changed since our last function call!
 	if ( g_iLastCurWeapon[id] != iCurWeapon && SHARED_ValidPlayer( id ) )
 	{
 		// Check to see if we should set the player's invisibility
 		SHARED_INVIS_Set( id );
-		
+
 		// Set the user's speed
 		SHARED_SetSpeed( id );
 	}
@@ -328,7 +314,6 @@ public on_Drop( id )
 // HamSandwich implementation
 public EVENT_Spawn( id )
 {
-
 	if ( !WC3_Check() )
 	{
 		return HAM_HANDLED;
@@ -346,19 +331,18 @@ public EVENT_Spawn( id )
 	// Prespawn call
 	//   - Purpose is to have a spawn call that happens before everything else!
 	WC3_PreSpawn( id );
-	
+
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
-		
 		// This is the first time the user has spawned this round
 		if ( !p_data_b[id][PB_HAS_SPAWNED] )
-		{	
+		{
 			EVENT_PlayerInitialSpawn( id );
 
 			p_data_b[id][PB_HAS_SPAWNED] = true;
 		}
 	}
-	
+
 	// Start a new session under the following conditions:
 	//		- Day of Defeat - need a new session per spawn!
 	//		- CSDM - rounds never end!!!
@@ -376,7 +360,6 @@ public EVENT_Spawn( id )
 // Function called EVERYTIME a user spawns!
 public on_ResetHud( id )
 {
-
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_CONTINUE;
@@ -403,16 +386,15 @@ public on_ResetHud( id )
 
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
-		
 		// This is the first time the user has spawned this round
 		if ( !p_data_b[id][PB_HAS_SPAWNED] )
-		{	
+		{
 			EVENT_PlayerInitialSpawn( id );
 
 			p_data_b[id][PB_HAS_SPAWNED] = true;
 		}
 	}
-	
+
 	// Start a new session under the following conditions:
 	//		- Day of Defeat - need a new session per spawn!
 	//		- CSDM - rounds never end!!!
@@ -431,8 +413,6 @@ public on_ResetHud( id )
 //		TRIGGERED BY: ResetHUD
 public EVENT_PlayerInitialSpawn( id )
 {
-	
-
 	// Display the cheat message ONLY if they just joined!
 	if ( p_data_b[id][PB_JUSTJOINED] && get_pcvar_num( CVAR_wc3_cheats ) )
 	{
@@ -470,7 +450,7 @@ public EVENT_NewRound()
 	{
 		WC3_BeforeSpawn( players[i] );
 	}
-	
+
 	// Reset which spawn points are reserved....
 	_SHARED_SpawnReset();
 
@@ -479,7 +459,7 @@ public EVENT_NewRound()
 	{
 		WC3_ResetGame();
 	}
-	
+
 	// Randomize Chameleon if we need to
 	CHAM_Randomize();
 
@@ -513,7 +493,7 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 	new iAttacker = pentToSkip;
 	new iVictim = get_tr(TR_pHit);
 	new iHitZone = (1 << get_tr(TR_iHitgroup));
-	
+
 	// Make sure we have a valid victim
 	if ( SHARED_ValidPlayer( iVictim ) && p_data_b[iVictim][PB_ISCONNECTED] )
 	{
@@ -523,18 +503,15 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 			// This is a check for ultimates that need to "search" for a target
 			if ( p_data_b[iAttacker][PB_ISSEARCHING] )
 			{
-
 				// Now lets make sure the person he's looking at is in view and isn't on the same team
 				if ( get_user_team( iAttacker ) != get_user_team( iVictim ) ) //&& UTIL_EntInView( iAttacker, iVictim ) )
 				{
-					
 					// Check to see if the user should block this ultimate!
 					if ( !g_EndRound && ULT_CanUserBlockUlt( iVictim ) )
 					{
 						ULT_RemoveCharge( iVictim, 0 );
 						ULT_Blocked( iAttacker );
 					}
-
 					// Then the user's ult should work!
 					else
 					{
@@ -577,7 +554,7 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 				if ( iHitZone & (1 << 1) )
 				{
 					set_tr( TR_flFraction, 1.0 );
-					
+
 					// Make sure we have a valid attacker!
 					if ( SHARED_ValidPlayer( iAttacker ) )
 					{
@@ -593,7 +570,7 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 							ITEM_RemoveCharge( iVictim, ITEM_HELM );
 						}
 					}
-					
+
 					return FMRES_SUPERCEDE;
 				}
 			}
@@ -616,22 +593,22 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 							return FMRES_IGNORED;
 						}
 					}
-					
+
 					// Then we should evade this shot!
 					if ( NE_Evasion( iVictim, iHitZone ) )
 					{
 						set_tr( TR_flFraction, 1.0 );
-						
+
 						WC3_StatusText( iVictim, TXT_SKILL, "You have evaded a shot!" );
 
 						return FMRES_SUPERCEDE;
 					}
 				}
 			}
-			
+
 			// Mole protectant
 			if ( p_data_b[iAttacker][PB_MOLE] && ITEM_Has( iVictim, ITEM_PROTECTANT ) > ITEM_NONE )
-			{	
+			{
 				new Float:fTime = halflife_time();
 
 				if ( fTime - fLastShotFired[iAttacker] < 0.1  )
@@ -647,7 +624,6 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 			// Check for Big Bad Voodoo's ultimate!
 			if ( p_data_b[iVictim][PB_GODMODE] )
 			{
-				
 				new bool:bBlockDamage = true;
 
 				// Do we allow this person to be attacked by this player?
@@ -655,7 +631,6 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 				{
 					bBlockDamage = false;
 				}
-
 				// Check to see if immunity is available for the attacker
 				else if ( ULT_CanUserBlockUlt( iAttacker ) )
 				{
@@ -682,6 +657,6 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 			}
 		}
 	}
-	
+
 	return FMRES_IGNORED;
 }

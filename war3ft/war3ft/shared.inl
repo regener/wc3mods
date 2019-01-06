@@ -36,7 +36,7 @@ public SHARED_INVIS_Set( id )
 			iInvisLevel = get_pcvar_num( CVAR_wc3_cloak );
 		}
 	}
-	
+
 	// If the player is holding a knife they should be more invisible
 	if ( SHARED_IsHoldingKnife( id ) )
 	{
@@ -46,10 +46,9 @@ public SHARED_INVIS_Set( id )
 	if ( iInvisLevel )
 	{
 		set_user_rendering( id, kRenderFxNone, 0, 0, 0, kRenderTransTexture, iInvisLevel );
-		
+
 		p_data_b[id][PB_INVIS] = true;
 	}
-
 	// User should not be invisible
 	else
 	{
@@ -75,7 +74,6 @@ public SHARED_IsHoldingKnife( id )
 			return true;
 		}
 	}
-
 	// Check for Day of Defeat
 	else if ( g_MOD == GAME_DOD )
 	{
@@ -92,7 +90,7 @@ public SHARED_IsHoldingKnife( id )
 SHARED_HasGrenade( id )
 {
 	new i, bool:bNadeFound = false;
-	
+
 	// Loop through all weapons and search for a grenade
 	while ( g_PlayerWeapons[id][i] && !bNadeFound )
 	{
@@ -214,7 +212,7 @@ public SHARED_GetAmmoName( iWeapID, szAmmoName[], len )
 	switch( iWeapID )
 	{
 		case CSW_USP, CSW_MAC10, CSW_UMP45:
-		{ 
+		{
 			copy( szAmmoName, len, "ammo_45acp" );
 		}
 		case CSW_ELITE, CSW_GLOCK18, CSW_MP5NAVY, CSW_TMP:
@@ -274,7 +272,7 @@ public _SHARED_Spawn( id )
 	}
 
 	id -= TASK_SPAWN;
-	
+
 	// Spawning doesn't work in DOD
 	if ( g_MOD == GAME_DOD )
 	{
@@ -303,7 +301,7 @@ public _SHARED_Spawn( id )
 	// Reset items when the user spawns!
 	g_iShopMenuItems[id][ITEM_SLOT_ONE]	= ITEM_NONE;
 	g_iShopMenuItems[id][ITEM_SLOT_TWO] = ITEM_NONE;
-	
+
 	if ( is_user_alive( id ) )
 	{
 		return;
@@ -324,11 +322,11 @@ public _SHARED_Spawn( id )
 
 	// Spawn the player
 	ExecuteHamB(Ham_CS_RoundRespawn,id);
-	
+
 	p_data_b[id][PB_SLOWED]		= false;
 	p_data_b[id][PB_STUNNED]	= false;
 	p_data_b[id][PB_GIVEITEMS]	= true;
-	
+
 	// Reset the user's skin to normal
 	SHARED_ChangeSkin( id, SKIN_RESET );
 
@@ -370,33 +368,31 @@ public _SHARED_Spawn_Final( id )
 //	set_pev(id, pev_spawnflags, 3);
 //	dllfunc(DLLFunc_Spawn, id);
 //	set_pev(id, pev_iuser1, 0);
-	
+
 	bIgnoreArmorSet[id] = false;
 
 	// If we don't give them a suit then they won't have a HUD
 	give_item( id, "item_suit" );
-	
+
 	// Vengeance Check
 	if ( p_data[id][P_RESPAWNBY] == RESPAWN_VENGEANCE )
 	{
 		set_pev( id, pev_dmg_inflictor, 0 );
 		set_user_health( id, VENGEANCE_HEALTH );
 	}
-	
+
 	return;
 }
 
 // Reincarnation for Day of Defeat
 public SHARED_DOD_Reincarnation( id )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
 	}
-	
-	new bReincarnate = 0;
 
+	new bReincarnate = 0;
 
 	// Reincarnate from a skill?
 	if ( SM_GetSkillLevel( id, SKILL_REINCARNATION ) > 0 )
@@ -416,13 +412,11 @@ public SHARED_DOD_Reincarnation( id )
 		bReincarnate = 1;
 	}
 
-
 	// Then we can't reincarnate
 	if ( !bReincarnate )
 	{
 		return;
 	}
-
 
 	// User just joined - we don't actually have a place to respawn them!
 	if ( g_DOD_ReincarnationStatus[id] == DOD_REINC_JUSTJOINED )
@@ -467,7 +461,6 @@ public SHARED_DOD_Reincarnation( id )
 
 public _SHARED_DOD_Reincarnation_Check( id )
 {
-
 	id -= TASK_REINCARNATION;
 
 	if ( !p_data_b[id][PB_ISCONNECTED] )
@@ -481,31 +474,29 @@ public _SHARED_DOD_Reincarnation_Check( id )
 	// Failure, stuck somewhere, put them back
 	if ( origin[2] == iReincarnation[id][2] )
 	{
-
 		new ent = SHARED_FindFreeSpawn( id, false );
-		
+
 		// Valid spawn found
 		if ( ent > 0 )
 		{
 			new Float:fSpawnOrigin[3], vOrigin[3];
-			
+
 			// Get the origin of the spawn point
 			entity_get_vector( ent, EV_VEC_origin, fSpawnOrigin );
-			
+
 			// Set the right angles
 			entity_get_vector( ent, EV_VEC_angles, fSpawnOrigin );
 			entity_set_vector( id, EV_VEC_angles, fSpawnOrigin );
 			entity_set_int( id, EV_INT_fixangle, 1)
-			
+
 			// Convert float vector to int vector
 			FVecIVec( fSpawnOrigin, vOrigin );
-			
+
 			// Move the user
 			set_user_origin( id, vOrigin );
 
 			client_print( id, print_chat, "%s %L", g_MODclient, id, "SKILL_REINCARNATION_FAILED" )
 		}
-
 		// No Spawn found
 		else
 		{
@@ -524,7 +515,7 @@ public _SHARED_DOD_Reincarnation_Loc( id )
 	{
 		return;
 	}
-	
+
 	g_DOD_ReincarnationStatus[id] = ( is_user_alive( id ) ) ? DOD_REINC_READY : DOD_REINC_DIEDLAST;
 
 	return;
@@ -533,7 +524,6 @@ public _SHARED_DOD_Reincarnation_Loc( id )
 // Reincarnation for Counter-Strike and Condition Zero
 public SHARED_CS_Reincarnation( id )
 {
-
 	if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
 		return;
@@ -546,14 +536,14 @@ public SHARED_CS_Reincarnation( id )
 	}
 
 	new bool:bGiveWeapons = false;
-	
+
 	// If the give items flag is true
 	if ( p_data_b[id][PB_GIVEITEMS] )
 	{
 		bGiveWeapons = true;
 		p_data_b[id][PB_GIVEITEMS] = false;
 	}
-	
+
 	// Check based on skill or if the user has an item
 	if ( p_data_b[id][PB_DIEDLASTROUND] )
 	{
@@ -566,29 +556,29 @@ public SHARED_CS_Reincarnation( id )
 
 			if ( random_float( 0.0, 1.0 ) <= p_ankh[iSkillLevel-1] )
 			{
-				bGiveWeapons = true;		
+				bGiveWeapons = true;
 			}
 		}
-		
+
 		// Ankh
 		if ( g_bPlayerBoughtAnkh[id] )
 		{
 			bGiveWeapons = true;
 
 			g_bPlayerBoughtAnkh[id] = false;
-		}	
+		}
 	}
 
 	if ( bGiveWeapons )
 	{
 		client_cmd( id, "speak %s", g_szSounds[SOUND_REINCARNATION] );
-		
+
 		// Make the user glow!
 		SHARED_Glow( id, 0, 100, 0, 0 );
 
 		// Screen fade green
 		Create_ScreenFade( id, (1<<10), (1<<10), (1<<12), 0, 255, 0, 255 );
-		
+
 		// Give the user their weapons from last round
 		set_task( 0.3, "_SHARED_CS_GiveWeapons", TASK_GIVEITEMS + id );
 	}
@@ -600,12 +590,11 @@ public SHARED_CS_Reincarnation( id )
 		}
 	}
 
-	return;	
-}	
+	return;
+}
 
 public _SHARED_CS_GiveWeapons(id)
 {
-
 	if ( id >= TASK_GIVEITEMS )
 	{
 		id -= TASK_GIVEITEMS;
@@ -632,7 +621,7 @@ public _SHARED_CS_GiveWeapons(id)
 		// g_ArmorType
 		cs_set_user_armor( id, p_data[id][P_LASTARMOR], g_ArmorType[id] );
 	}
-	
+
 	// Give a defuse kit
 	if ( p_data_b[id][PB_DEFUSE] )
 	{
@@ -640,7 +629,6 @@ public _SHARED_CS_GiveWeapons(id)
 		// Check for bomb on the back of chameleon
 		if ( p_data_b[id][PB_SKINSWITCHED] )
 			entity_set_int(id, EV_INT_body, 0);
-
 	}
 
 	if ( p_data_b[id][PB_NIGHTVISION] )
@@ -655,7 +643,7 @@ public _SHARED_CS_GiveWeapons(id)
 
 		cs_set_user_plant( id, 1, 1 );
 	}
-	
+
 	new iWeapID = 0, i = 0, bool:bPrimaryFound = false;
 	for ( i = 0; i < 32; i++ )
 	{
@@ -668,7 +656,7 @@ public _SHARED_CS_GiveWeapons(id)
 				new szWeaponName[32], szAmmoName[32];
 				get_weaponname( iWeapID, szWeaponName, 31 );
 				SHARED_GetAmmoName( iWeapID, szAmmoName, 31 );
-				
+
 				if ( contain( szWeaponName, "weapon_" ) == 0 )
 				{
 					give_item( id, szWeaponName );
@@ -728,7 +716,6 @@ public _SHARED_SetSilenceBurst( id )
 		return;
 	}
 
-
 	new iWeaponEnt = find_ent_by_owner( -1, "weapon_m4a1", id );
 	if ( is_valid_ent( iWeaponEnt ) )
 	{
@@ -769,7 +756,7 @@ public SHARED_SaveWeapons( id )
 
 	new num = 0;
 	get_user_weapons( id, g_PlayerWeapons[id], num );
-	
+
 	return;
 }
 
@@ -788,7 +775,6 @@ public SHARED_CopySavedWeapons( id )
 // Sets the user's speed, should be called after freezetime, on weapon change and after a speed modifying skill has been called
 public SHARED_SetSpeed( id )
 {
-
 	if ( id >= TASK_UNHOLYSPEED )
 	{
 		id -= TASK_UNHOLYSPEED;
@@ -798,13 +784,12 @@ public SHARED_SetSpeed( id )
 	{
 		return;
 	}
-	
+
 	// We should NOT change the user's speed during freezetime
 	if ( g_freezeTime && ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO ) )
 	{
 		return;
 	}
-
 	// User is stunned, we shouldn't change their speed
 	else if ( p_data_b[id][PB_STUNNED] )
 	{
@@ -812,7 +797,6 @@ public SHARED_SetSpeed( id )
 
 		return;
 	}
-
 	// User is hexed, they should be slowed
 	else if ( p_data_b[id][PB_HEXED] )
 	{
@@ -820,19 +804,16 @@ public SHARED_SetSpeed( id )
 
 		return;
 	}
-
 	// User is slowed
 	else if ( p_data_b[id][PB_SLOWED] )
 	{
 		set_user_maxspeed( id, get_pcvar_float( CVAR_wc3_frost ) );
-		
+
 		return;
 	}
-	
 	// Day of Defeat specific checks
 	else if ( g_MOD == GAME_DOD )
 	{
-		
 		// User is in the prone position so we shouldn't change their speed
 		if ( entity_get_int( id, EV_INT_iuser3 ) )
 		{
@@ -844,7 +825,6 @@ public SHARED_SetSpeed( id )
 
 			return;
 		}
-
 		// User has a rocket launcher "mounted", we let users w/unholy aura + boots of speed run faster with it
 		else if ( get_user_maxspeed( id ) == 50.0 && ( ITEM_Has( id, ITEM_BOOTS ) > ITEM_NONE || SM_GetSkillLevel( id, SKILL_UNHOLYAURA ) > 0 ) )
 		{
@@ -853,14 +833,13 @@ public SHARED_SetSpeed( id )
 			return;
 		}
 	}
-
 	// Counter-Strike and Condition Zero specific checks
 	else if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
 		new Float:fNewSpeed = 0.0;
 		static iSkillLevel;
 		iSkillLevel = SM_GetSkillLevel( id, SKILL_UNHOLYAURA );
-		
+
 		// Unholy Aura bonus
 		if ( iSkillLevel > 0.0 )
 		{
@@ -872,13 +851,12 @@ public SHARED_SetSpeed( id )
 		{
 			new iClip, iAmmo;
 			new iWeapon = get_user_weapon( id, iClip, iAmmo );
-			
+
 			// Then just apply the bonus!
 			if ( fNewSpeed > 0.0 )
 			{
 				fNewSpeed *= ( 1.0 + get_pcvar_float( CVAR_wc3_boots ) );
 			}
-			
 			// User only has boots
 			else
 			{
@@ -915,7 +893,7 @@ public SHARED_SetSpeed( id )
 		// Here we want to reset the user's speed
 		new iClip, iAmmo;
 		new iWeapon = get_user_weapon( id, iClip, iAmmo );
-		
+
 		if ( g_iPlayerRole[id] == PLR_VIP )
 		{
 			set_user_maxspeed( id, CS_SPEED_VIP );
@@ -939,7 +917,6 @@ public SHARED_SetSpeed( id )
 
 public SHARED_ResetMaxSpeed( id )
 {
-
 	if ( id >= TASK_RESETSPEED )
 	{
 		id -= TASK_RESETSPEED;
@@ -950,7 +927,7 @@ public SHARED_ResetMaxSpeed( id )
 	{
 		return;
 	}
-	
+
 	// User should no longer be stunned
 	p_data_b[id][PB_STUNNED]	= false;
 
@@ -965,7 +942,6 @@ public SHARED_ResetMaxSpeed( id )
 // Returns true if the user is hexed/stunned/slowed
 SHARED_IsPlayerSlowed( id )
 {
-
 	if ( p_data_b[id][PB_STUNNED] || p_data_b[id][PB_SLOWED] )
 	{
 		return true;
@@ -977,13 +953,11 @@ SHARED_IsPlayerSlowed( id )
 // Function changes your skin for ITEM_MOLE and Chameleon
 public SHARED_ChangeSkin( id, iFlag )
 {
-	
 	new szSkin[32];
-	
+
 	// Reset the user's model
 	if ( iFlag == SKIN_RESET && p_data_b[id][PB_SKINSWITCHED] )
 	{
-
 		if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 		{
 			cs_reset_user_model( id );
@@ -995,23 +969,22 @@ public SHARED_ChangeSkin( id, iFlag )
 
 		p_data_b[id][PB_SKINSWITCHED] = false;
 	}
-	
 	// Switch the user's skin to the opposing team
 	else if ( iFlag == SKIN_SWITCH )
 	{
 		new iTeam = get_user_team( id );
-		
+
 		// For Counter-Strike or Condition Zero
 		if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 		{
 			new iModelNum = random_num( 0, 3 );
-			
+
 			// Condition Zero has one more model!
 			if ( g_MOD == GAME_CZERO )
 			{
 				iModelNum = random_num( 0, 4 );
 			}
-			
+
 			// Save which skin we're going to use
 			if ( iTeam == TEAM_CT )
 			{
@@ -1026,7 +999,6 @@ public SHARED_ChangeSkin( id, iFlag )
 			if (cs_get_user_defuse(id))
 				entity_set_int(id, EV_INT_body, 0);
 		}
-
 		// For Day of Defeat
 		else if ( g_MOD == GAME_DOD )
 		{
@@ -1038,20 +1010,18 @@ public SHARED_ChangeSkin( id, iFlag )
 			}
 			else
 			{
-				
 				// Then we should use a British model
 				if ( dod_get_map_info( MI_ALLIES_TEAM ) == 1 )
 				{
 					add( szSkin, 31, SKIN_BRIT[0] );
 				}
-				
 				// Otherwise use American model
 				else
 				{
 					add( szSkin, 31, SKIN_ALLIES[iModelNum] );
 				}
 			}
-			
+
 			dod_set_model( id, szSkin );
 		}
 
@@ -1063,13 +1033,12 @@ public SHARED_ChangeSkin( id, iFlag )
 
 public SHARED_SetGravity( id )
 {
-
 	// Can't set gravity if user isn't connected!
 	if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
 		return;
 	}
-	
+
 	// If gravity is less than this, lets not change per-user b/c it BLOWS ASS in game
 	if ( CVAR_sv_gravity == 0 || get_pcvar_num( CVAR_sv_gravity ) > 650 )
 	{
@@ -1087,7 +1056,6 @@ public SHARED_SetGravity( id )
 		// Set the user's gravity based on the item
 		if ( ITEM_Has( id, ITEM_SOCK ) > ITEM_NONE )
 		{
-			
 			// User has levitation + sock, give them an extra bonus
 			if ( fGravityLevel < 1.0 )
 			{
@@ -1138,7 +1106,7 @@ public SHARED_IsOnTeam( id )
 public _SHARED_SpawnReset()
 {
 	new i;
-	
+
 	g_iSpawnInc = 0;
 	for ( i = 0; i < TOTAL_SPAWNS; i++ )
 	{
@@ -1165,14 +1133,13 @@ bool:SHARED_SpawnReserved( ent )
 // Find a free spawn!
 SHARED_FindFreeSpawn( id, bImmunityCheck = false, bReverseTeam = false )
 {
-
 	new iPlayersInVicinity, iSpawnID, iEntList[1], vOrigin[3], iNearbyPlayer;
 	new ent = -1;
 	new Float:fSpawnOrigin[3];
 	new Float:fVicinity = 96.0;
 	new bool:bFound = false;
 	new bool:bImmunityNear = false;
-	
+
 	new iTeam = get_user_team( id );
 
 	// Reverse the team IDs (i.e. Mole would want this)
@@ -1201,26 +1168,24 @@ SHARED_FindFreeSpawn( id, bImmunityCheck = false, bReverseTeam = false )
 	// Loop through each ent until we find a spawn entity that we want
 	do {
 		ent = find_ent_by_class( ent, szSpawnEnt[iSpawnID] );
-		
+
 		// Valid ent found
 		if ( ent != 0 )
 		{
 			entity_get_vector( ent, EV_VEC_origin, fSpawnOrigin );
-			
+
 			// Convert float vector to int vector
 			FVecIVec( fSpawnOrigin, vOrigin );
 
 			// Check to see if there are players in this spawn
 			iPlayersInVicinity = find_sphere_class( 0, "player", fVicinity, iEntList, 1, fSpawnOrigin );
-			
+
 			// We have a free spawn!!
 			if ( iPlayersInVicinity == 0 )
 			{
-
 				// Make sure it isn't reserved
 				if ( !SHARED_SpawnReserved( ent ) )
 				{
-
 					// Then we need to reserve it :)
 					g_iSpawnReserved[g_iSpawnInc++] = ent;
 
@@ -1244,7 +1209,7 @@ SHARED_FindFreeSpawn( id, bImmunityCheck = false, bReverseTeam = false )
 							bFound = true;
 						}
 					}
-					
+
 					// We have a free spawn we can quit!
 					else
 					{
@@ -1255,7 +1220,7 @@ SHARED_FindFreeSpawn( id, bImmunityCheck = false, bReverseTeam = false )
 		}
 	}
 	while ( ent && !bFound && !bImmunityNear )
-	
+
 	// Reset the spawn points...
 	if ( !task_exists( TASK_RESETSPAWNS ) )
 	{
@@ -1273,7 +1238,7 @@ SHARED_FindFreeSpawn( id, bImmunityCheck = false, bReverseTeam = false )
 
 		return -1;
 	}
-	
+
 	// Otherwise we found something!
 	return ent;
 }
@@ -1295,14 +1260,14 @@ SHARED_MoleCheck( id, bItemOnly = false )
 			parm[1] = 1;
 		}
 	}
-	
+
 	// Mole from an item?
 	if ( parm[1] == 0 )
 	{
 		if ( g_bPlayerBoughtMole[id] )
 		{
 			parm[1] = 2;
-			
+
 			ITEM_RemoveID(id, ITEM_MOLE);
 			g_bPlayerBoughtMole[id] = false;
 		}
@@ -1312,14 +1277,13 @@ SHARED_MoleCheck( id, bItemOnly = false )
 	if ( parm[1] > 0 )
 	{
 		parm[0] = id;
-		
+
 		set_task( 0.1, "_SHARED_Mole", TASK_MOLE + id, parm, 2 );
 	}
 }
 
 public _SHARED_Mole( parm[2] )
 {
-	
 	new id = parm[0];
 
 	if ( !p_data_b[id][PB_ISCONNECTED] )
@@ -1327,39 +1291,38 @@ public _SHARED_Mole( parm[2] )
 		return;
 	}
 
-	// Lets search for a new spawn (ignore immunity, reverse team ids)	
+	// Lets search for a new spawn (ignore immunity, reverse team ids)
 	new ent = SHARED_FindFreeSpawn( id, false, true );
-	
+
 	// Free spawn found!!
 	if ( ent > 0 )
 	{
 		new vOrigin[3], Float:fSpawnOrigin[3];
-		
+
 		// Set the right angels
 		entity_get_vector( ent, EV_VEC_angles, fSpawnOrigin );
 		entity_set_vector( id, EV_VEC_angles, fSpawnOrigin );
 		entity_set_int( id, EV_INT_fixangle, 1 );
-		
+
 		// Get the origin of the spawn
 		entity_get_vector( ent, EV_VEC_origin, fSpawnOrigin );
-		
+
 		// Convert float vector to int vector
 		FVecIVec( fSpawnOrigin, vOrigin );
-		
+
 		// Change the user's skin
 		SHARED_ChangeSkin( id, SKIN_SWITCH );
-		
+
 		// Move the user
 		set_user_origin( id, vOrigin );
 
 		// Shake the user's screen
 		Create_ScreenShake( id, (255<< 14), (10 << 14), (255<< 14) );
-		
+
 		// User is a mole
 		p_data_b[id][PB_MOLE] = true;
 
 	}
-
 	// No spawn found
 	else
 	{
@@ -1378,8 +1341,8 @@ public _SHARED_Mole( parm[2] )
 		}
 	}
 
-	return; 
-} 
+	return;
+}
 
 bool:SHARED_ValidPlayer( id )
 {
@@ -1395,13 +1358,12 @@ bool:SHARED_ValidPlayer( id )
 
 SHARED_Glow( id, iRed, iGreen, iBlue, iAll )
 {
-	
 	// Not allowed to glow right now...
 	if ( !p_data_b[id][PB_CAN_RENDER] )
 	{
 		return;
 	}
-		
+
 	// Don't glow if invisible
 	else if ( SM_GetSkillLevel( id, SKILL_INVISIBILITY ) > 0 || ITEM_Has( id, ITEM_CLOAK ) > ITEM_NONE )
 	{
@@ -1413,7 +1375,7 @@ SHARED_Glow( id, iRed, iGreen, iBlue, iAll )
 	{
 		return;
 	}
-	
+
 	if ( iAll )
 	{
 		g_GlowLevel[id][0]	= 0;
@@ -1448,14 +1410,12 @@ SHARED_Glow( id, iRed, iGreen, iBlue, iAll )
 	g_GlowLevel[id][1] = ( ( g_GlowLevel[id][1] > MAXGLOW ) ? MAXGLOW : g_GlowLevel[id][1] );
 	g_GlowLevel[id][2] = ( ( g_GlowLevel[id][2] > MAXGLOW ) ? MAXGLOW : g_GlowLevel[id][2] );
 	g_GlowLevel[id][3] = ( ( g_GlowLevel[id][3] > MAXGLOW ) ? MAXGLOW : g_GlowLevel[id][3] );
-	
 
 	_SHARED_Glow( id );
 }
 
 public _SHARED_Glow( id )
 {
-	
 	if ( id >= TASK_GLOW )
 	{
 		id -= TASK_GLOW;
@@ -1466,7 +1426,7 @@ public _SHARED_Glow( id )
 	{
 		return;
 	}
-	
+
 	new iRed	= g_GlowLevel[id][0];
 	new iGreen	= g_GlowLevel[id][1];
 	new iBlue	= g_GlowLevel[id][2];
@@ -1475,21 +1435,18 @@ public _SHARED_Glow( id )
 	// Then we want to glow
 	if ( iRed || iGreen || iBlue )
 	{
-
 		g_GlowLevel[id][0] = ( ( iRed > 5 )		? iRed - 5		: 0 );
 		g_GlowLevel[id][1] = ( ( iGreen > 5 )	? iGreen - 5	: 0 );
 		g_GlowLevel[id][2] = ( ( iBlue > 5 )	? iBlue - 5		: 0 );
 
 		set_user_rendering( id, kRenderFxGlowShell, iRed, iGreen, iBlue, kRenderNormal, 16 );
 	}
-
 	else if ( iAll )
 	{
 		g_GlowLevel[id][3] = ( ( iAll > 5 )		? iAll - 5		: 0 );
-		
+
 		set_user_rendering( id, kRenderFxGlowShell, iAll, iAll, iAll, kRenderNormal, 16 );
 	}
-
 	// No more glowing!
 	else
 	{
@@ -1513,9 +1470,8 @@ SHARED_GetMaxArmor( id )
 // Returns if an origin is near an objective (returns which objective)
 SHARED_NearObjective( vOrigin[3] )
 {
-
 	new i, Float:fOrigin[3];
-	
+
 	// Convert vector to float
 	IVecFVec( vOrigin, fOrigin );
 
@@ -1549,7 +1505,6 @@ stock SHARED_ForceWeaponChange( id )
 		// Loop through all weapons
 		for ( i = 0; i < num; i++ )
 		{
-			
 			// Find a weapon the player isn't currently holding
 			if ( iWeapons[i] != iCurWeapon && iWeapons[i] > 0 )
 			{
@@ -1592,27 +1547,26 @@ public _SHARED_Teleport( parm[] )
 {
 	new id = parm[3];
 	new vOrigin[3];
-	
-	get_user_origin( id, vOrigin );
 
+	get_user_origin( id, vOrigin );
 
 	// User is stuck, lets teleport them back to their spawn
 	if ( vOrigin[2] == parm[2] )
 	{
 		// Find a spawn - ignore immunity and team reversal
 		new iSpawnEnt = SHARED_FindFreeSpawn( id, false, false );
-		
+
 		// We can move the user yay!
 		if ( iSpawnEnt > 0 )
 		{
 			new Float:fSpawnOrigin[3], vOrigin[3];
-			
+
 			// Get the origin of the spawn point
 			entity_get_vector( iSpawnEnt, EV_VEC_origin, fSpawnOrigin );
 
 			// Convert float vector to int vector
 			FVecIVec( fSpawnOrigin, vOrigin );
-			
+
 			// Move the user
 			SHARED_Teleport( id, vOrigin );
 

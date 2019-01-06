@@ -1,5 +1,5 @@
 #define WC3FT_V_MAJOR	3
 #define WC3FT_V_MINOR	0
-#define WC3FT_V_RELEASE	0
+#define WC3FT_V_RELEASE	1
 #define WC3FT_V_BUILD	"???"
 new WC3FT_VERSION[10]

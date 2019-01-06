@@ -2,7 +2,6 @@
 
 public MOTD_ItemsInfo( id, iStart )
 {
-
 	static szTmp[256], szTmp2[256], pos, i;
 	pos = 0;
 
@@ -32,7 +31,6 @@ public MOTD_ItemsInfo( id, iStart )
 
 public MOTD_PlayerSkills( id, bool:bThroughSay )
 {
-
 	new iPlayers[32], iNumPlayers, i;
 	get_players( iPlayers, iNumPlayers );
 
@@ -42,10 +40,10 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 	{
 		iTargetID	= iPlayers[i];
 		iRaceID		= p_data[iTargetID][P_RACE];
-		
+
 		bRaceUsed[iRaceID] = true;
 	}
-	
+
 	new pos = 0, iTeam, k, szTeamColor[2];
 
 	// Then we have a player, and we're not on the server console
@@ -58,11 +56,9 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 	// Loop through each race
 	for ( iRaceID = 1; iRaceID < get_pcvar_num( CVAR_wc3_races ) + 1; iRaceID++ )
 	{
-
 		// Make sure this race was used somewhere!
 		if ( bRaceUsed[iRaceID] )
 		{
-
 			// Get the race's name
 			lang_GetRaceName ( iRaceID, id, szTmpName, 63 );
 
@@ -71,7 +67,6 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 			{
 				pos += formatex( szTmpMsg[pos], 2047 - pos, "<b>%s</b><ul>", szTmpName );
 			}
-
 			// Server Console
 			else
 			{
@@ -85,11 +80,9 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 				}
 			}
 
-
 			// Lets show them per team, T, then CT, then Spectators
 			for ( iTeam = TEAM_T; iTeam <= TEAM_CT + 1; iTeam++ )
 			{
-				
 				// Default color
 				formatex( szTeamColor, 1, "p" );
 
@@ -104,7 +97,6 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 						formatex( szTeamColor, 1, "c" );
 					}
 				}
-
 				else if ( g_MOD == GAME_DOD )
 				{
 					if ( iTeam == ALLIES )
@@ -122,14 +114,12 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 				{
 					iTargetID = iPlayers[k];
 
-					
 					// Make sure the user has this race and is on the proper team
 					if ( p_data[iTargetID][P_RACE] == iRaceID && get_user_team( iTargetID ) == iTeam )
 					{
-
 						get_user_name( iTargetID, szTmpName, 63 );
 						get_user_team( iTargetID, szTeamName, 31 );
-						
+
 						// Player
 						if ( id != 0 && bThroughSay )
 						{
@@ -169,13 +159,11 @@ public MOTD_PlayerSkills( id, bool:bThroughSay )
 		show_motd( id, szTmpMsg, szTitle );
 	}
 
-	
 	return;
 }
 
 public MOTD_SkillsInfo( id )
 {
-
 	static iSkillID, bool:bHeaderShown, pos;
 	new szTitle[128], szTmpDesc[256], szSkillName[128], szRaceName[64];
 
@@ -190,7 +178,7 @@ public MOTD_SkillsInfo( id )
 
 		// format the title
 		pos += formatex( szTmpMsg[pos], 2047-pos, "<div id=^"title^">%s</div><br><br>", szRaceName );
-		
+
 		// Format the MOTD title
 		formatex( szTitle, 127, "%s %L", szRaceName, id, "WORD_INFORMATION" );
 	}
@@ -203,7 +191,6 @@ public MOTD_SkillsInfo( id )
 		// Format the MOTD title
 		formatex( szTitle, 127, "Skills Information" );
 	}
-
 
 	// Lets get the trainable skills first!
 	bHeaderShown = false;
@@ -276,12 +263,10 @@ public MOTD_SkillsInfo( id )
 
 public MOTD_War3help(id)
 {
-
 	if ( !WC3_Check( id ) )
 	{
 		return;
 	}
-
 
 	// Get the game title
 	new szGame[32];
@@ -297,7 +282,7 @@ public MOTD_War3help(id)
 	pos += formatex( szTmpMsg[pos], 2047-pos, "%L<br>"	, id, "MOTD_CLICK_FOR_LATEST" );
 	pos += formatex( szTmpMsg[pos], 2047-pos, "%L<p>"	, id, "MOTD_MORE_INFO", szGame );
 	pos += formatex( szTmpMsg[pos], 2047-pos, "%L"		, id, "WAR3HELP" );
-	
+
 	// Set up the title
 	new szTitle[128];
 	formatex( szTitle, 127, "%L", id, "WAR3HELP_TITLE" );

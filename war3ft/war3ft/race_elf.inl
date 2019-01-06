@@ -7,16 +7,15 @@
 // Initiate Ultimate
 public NE_ULT_Entangle( iCaster, iEnemy )
 {
-
 	// Follow the user until they stop moving...
 	Create_TE_BEAMFOLLOW( iEnemy, g_iSprites[SPR_TRAIL], 10, 5, 10, 108, 23, 255 );
-	
+
 	// User is now stunned so we can't do any other stun abilities
 	p_data_b[iEnemy][PB_STUNNED] = true;
-	
+
 	// Set the speed of the enemy (this will auto-stun them)
 	SHARED_SetSpeed( iEnemy );
-	
+
 	// Start waiting for the user to stop...
 	new parm[4];
 	parm[0] = iEnemy;
@@ -24,13 +23,13 @@ public NE_ULT_Entangle( iCaster, iEnemy )
 	parm[2] = 0;
 	parm[3] = 0;
 	_NE_ULT_EntangleWait( parm );
-	
+
 	// Drop the user's weapon
 	if ( get_pcvar_num( CVAR_wc3_entangle_drop ) )
 	{
 		new ammo, clip;
 		new iWeapon = get_user_weapon( iEnemy, ammo, clip );
-		
+
 		// Only drop the weapon if it is the user's primary weapon
 		if ( SHARED_IsPrimaryWeapon( iWeapon ) )
 		{
@@ -44,7 +43,6 @@ public NE_ULT_Entangle( iCaster, iEnemy )
 // Wait for the user to stop moving
 public _NE_ULT_EntangleWait( parm[4] )
 {
-
 	new id = parm[0];
 
 	if ( !p_data_b[id][PB_ISCONNECTED] )
@@ -54,7 +52,7 @@ public _NE_ULT_EntangleWait( parm[4] )
 
 	new vOrigin[3];
 	get_user_origin( id, vOrigin );
-	
+
 	// Checking to see if the user has actually stopped yet?
 	if ( vOrigin[0] == parm[1] && vOrigin[1] == parm[2] && vOrigin[2] == parm[3] )
 	{
@@ -62,7 +60,7 @@ public _NE_ULT_EntangleWait( parm[4] )
 
 		// Reset the user's speed in ENTANGLE_TIME amount of time
 		set_task( ENTANGLE_TIME, "SHARED_ResetMaxSpeed", TASK_RESETSPEED + id );
-		
+
 		// Entangle the user
 		NE_ULT_EntangleEffect( id )
 	}
@@ -81,11 +79,10 @@ public _NE_ULT_EntangleWait( parm[4] )
 
 public NE_ULT_EntangleEffect( id )
 {
-
 	// Get the user's origin
 	new vOrigin[3];
 	get_user_origin( id, vOrigin );
-	
+
 	// Play the entangle sound
 	emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_ENTANGLING], 1.0, ATTN_NORM, 0, PITCH_NORM );
 
@@ -124,7 +121,7 @@ public NE_ULT_EntangleEffect( id )
 			x2 = iRadius*100/141;
 		else if ( iCounter == 4 )
 			x2 = iRadius;
-		
+
 		if ( iCounter <= 4 )
 			y2 = sqroot( iRadius*iRadius-x2*x2 );
 		else
@@ -134,14 +131,13 @@ public NE_ULT_EntangleEffect( id )
 
 		while ( iHeight > -40 )
 		{
-			
 			iStart[0]	= vOrigin[0] + x1;
 			iStart[1]	= vOrigin[1] + y1;
 			iStart[2]	= vOrigin[2] + iHeight;
 			iEnd[0]		= vOrigin[0] + x2;
 			iEnd[1]		= vOrigin[1] + y2;
 			iEnd[2]		= vOrigin[2] + iHeight + 2;
-			
+
 			Create_TE_BEAMPOINTS( iStart, iEnd, g_iSprites[SPR_BEAM], 0, 0, ( floatround( ENTANGLE_TIME ) * 10 ), 10, 5, 10, 108, 23, 255, 0 );
 
 			iHeight -= 16;
@@ -161,19 +157,18 @@ NE_Evasion( id, iHitZone )
 	if ( !p_data_b[id][PB_HEXED] && iSkillLevel > 0 && random_float( 0.0, 1.0 ) <= p_evasion[iSkillLevel-1] )
 	{
 		new iGlowIntensity = random_num( 20, 50 );
-		
+
 		// Head shot
 		if ( iHitZone & (1 << HITGROUP_HEAD) )
 		{
 			iGlowIntensity += 250;
 		}
-
 		// Chest
 		else if ( iHitZone & (1 << HITGROUP_CHEST) )
 		{
 			iGlowIntensity += 75;
 		}
-		
+
 		// Make the user glow!
 		SHARED_Glow( id, 0, 0, iGlowIntensity, 0 );
 
@@ -195,7 +190,7 @@ NE_SkillsOffensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace )
 	{
 		static iTempDamage;
 		iTempDamage = floatround( float( iDamage ) * p_trueshot[iSkillLevel-1] );
-		
+
 		// Damage the user
 		WC3_Damage( iVictim, iAttacker, iTempDamage, iWeapon, iHitPlace );
 
@@ -217,13 +212,13 @@ NE_SkillsDefensive( iAttacker, iVictim, iDamage, iHitPlace )
 	{
 		static iAdditionalDamage;
 		iAdditionalDamage = floatround( float( iDamage ) * p_thorns[iSkillLevel-1] );
-		
+
 		// Damage the user
 		WC3_Damage( iAttacker, iVictim, iAdditionalDamage, CSW_THORNS, iHitPlace );
 
 		// Make the user glow!
 		SHARED_Glow( iAttacker, ( 3 * iAdditionalDamage ), 0, 0, 0 );
-		
+
 		// Create a screen fade
 		Create_ScreenFade( iAttacker, (1<<10), (1<<10), (1<<12), 0, 0, 255, iAdditionalDamage )
 	}

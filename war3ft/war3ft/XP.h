@@ -19,14 +19,13 @@
 // Kill modifiers
 #define KILL_HEADSHOT		10			// XP awarded for getting a headshot
 #define KILL_HOSTAGE_SAVER	10			// XP awarded for killing the hostage saver
-#define	KILL_DEFUSER		10			// XP awarded for killing the defuser
+#define KILL_DEFUSER		10			// XP awarded for killing the defuser
 #define KILL_PLANTER		10			// XP awarded for killing the planter
 #define KILL_BOMB_CARRIER	10			// XP awarded for killing the bomb carrier
 #define KILL_VIP			20			// XP awarded for killing the VIP
 #define KILL_RADIUS			250			// Nearby radius to award XP
 
 #define WIN_ROUND			20			// XP awarded for winning the round
-
 
 // Holds information about the player
 enum

@@ -1,3 +1,13 @@
+v3.0.1
+	- Bug Fix: Removed unreacheable code
+	- Bug Fix: SM_(G/S)etSkillLevel fuctions made a big amount of error logs if bots were the target
+	- Bug Fix: "Bad entity in IndexOfEdict()" error, fix for Geesu/wc3mods#1
+	- Change: You does not get XP anymore until you select a Race
+	- Change: Friendlier weapon name display at teammates (CS/CZ)
+	- Change: Removed 64bit check (not supported anymore), removed reqlib statements (not necessary afaik)
+	- Change: Styling changes, less whitespace
+	- Addition: Increased avaible dynamic memory to use
+
 v3.0 RC14
  - Bug Fix: [FS#141] Admin command crash fix
  - Bug Fix: Registered cvar twice

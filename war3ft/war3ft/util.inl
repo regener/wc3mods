@@ -4,7 +4,6 @@
 
 UTIL_GetWeaponName( iWeapon, szWpnName[], len )
 {
-
 	// Counter-Strike and Condition Zero Weapons
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
@@ -45,7 +44,6 @@ UTIL_GetWeaponName( iWeapon, szWpnName[], len )
 			case CSW_HEGRENADE:     copy( szWpnName, len, "grenade"		);
 		}
 	}
-
 	else if ( g_MOD == GAME_DOD )
 	{
 		switch ( iWeapon )
@@ -153,7 +151,7 @@ stock UTIL_EntInView( id, iEnt )
 	{
 		return 1;
 	}
-	
+
 	return 0;
 }
 

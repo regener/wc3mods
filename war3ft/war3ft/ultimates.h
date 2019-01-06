@@ -1,9 +1,9 @@
 // For Icon events
-#define ICON_HIDE 0 
-#define ICON_SHOW 1 
-#define ICON_FLASH 2 
+#define ICON_HIDE 0
+#define ICON_SHOW 1
+#define ICON_FLASH 2
 
-new g_UltimateIcons[8][32] = 
+new g_UltimateIcons[8][32] =
 					{
 						"dmg_rad",				// Undead
 						"item_longjump",		// Human Alliance

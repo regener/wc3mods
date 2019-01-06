@@ -29,7 +29,7 @@ CL_ULT_LocustGetTarget( id )
 			iTargets[iTotalTargets++] = iTargetID;
 		}
 	}
-	
+
 	// No victims found
 	if ( iTotalTargets == 0 )
 	{
@@ -62,7 +62,6 @@ CL_ULT_LocustGetTarget( id )
 
 CL_ULT_LocustSwarm( id )
 {
-
 	new iVictim = CL_ULT_LocustGetTarget( id );
 
 	// No target was found :/
@@ -83,7 +82,7 @@ CL_ULT_LocustSwarm( id )
 	// Lets get the origin of the caster
 	new vCasterOrigin[3];
 	get_user_origin( id, vCasterOrigin );
-	
+
 	// Flash their ultimate!
 	ULT_Icon( id, ICON_FLASH );
 
@@ -120,7 +119,7 @@ public _CL_ULT_LocustEffect( parm[] )
 		{
 			//set_hudmessage( 178, 14, 41, -1.0, 0.3, 0, 1.0, 5.0, 0.1, 0.2, -1 );
 			WC3_StatusText( iAttacker, TXT_BLINK_CENTER, "No valid targets found" );
-			
+
 			// Set ultimate timer back to 0
 			p_data[iAttacker][P_ULTIMATEDELAY] = 0;
 
@@ -148,7 +147,7 @@ public _CL_ULT_LocustEffect( parm[] )
 		parm[4] = vCasterOrigin[2];
 
 		client_print( iAttacker, print_chat, "%s Victim is no longer targetable, try casting again!", g_MODclient );
-		
+
 		/*client_print( iAttacker, print_chat, "%s Victim is no longer targetable, try casting again!", g_MODclient );
 
 		p_data[iAttacker][P_ULTIMATEDELAY] = 0;
@@ -167,20 +166,19 @@ public _CL_ULT_LocustEffect( parm[] )
 	vFunnel[0] = parm[2];
 	vFunnel[1] = parm[3];
 	vFunnel[2] = parm[4];
-	
+
 	// Draw a funnel
 	Create_TE_LARGEFUNNEL( vFunnel, g_iSprites[SPR_SNOW], 0 );
-	
+
 	// Now we need to calculate where the next funnel will be drawn
 	new vDist[3];
 	vDist[XPOS] = CL_HLP_Diff( vVictimOrigin[0], vFunnel[0] );
 	vDist[YPOS] = CL_HLP_Diff( vVictimOrigin[1], vFunnel[1] );
-	vDist[ZPOS] = CL_HLP_Diff( vVictimOrigin[2], vFunnel[2] );	
-	
+	vDist[ZPOS] = CL_HLP_Diff( vVictimOrigin[2], vFunnel[2] );
+
 	new i;
 	for ( i = 0; i < 3; i++ )
 	{
-		
 		if ( CL_HLP_Diff( vVictimOrigin[i], vFunnel[i] - MULTIPLIER ) < vDist[i] )
 		{
 			vFunnel[i] -= MULTIPLIER;
@@ -204,7 +202,6 @@ public _CL_ULT_LocustEffect( parm[] )
 	// Still not close enough to our target
 	if ( !( vDist[XPOS] < 50 && vDist[YPOS] < 50 && vDist[ZPOS] < 50 ) )
 	{
-		
 		new Float:fTime = 0.2;
 
 		if ( g_MOD == GAME_DOD )
@@ -214,19 +211,18 @@ public _CL_ULT_LocustEffect( parm[] )
 
 		set_task( fTime, "_CL_ULT_LocustEffect", iAttacker + TASK_FUNNELS, parm, 5 );
 	}
-
 	// We're close enough, we can damage them!
 	else
 	{
 		new iDamage = random_num( LOCUSTSWARM_DMG_MIN, LOCUSTSWARM_DMG_MAX );
 
 		WC3_Damage( iVictim, iAttacker, iDamage, CSW_LOCUSTS, -1 );
-		
+
 		// Hide icon
 		ULT_Icon( iAttacker, ICON_HIDE );
 
 		emit_sound( iVictim, CHAN_STATIC, g_szSounds[SOUND_LOCUSTSWARM], 1.0, ATTN_NORM, 0, PITCH_NORM );
-		
+
 		new szName[32];
 		get_user_name( iVictim, szName, 31 );
 
@@ -244,8 +240,6 @@ CL_HLP_Diff( iNum, iNum2 )
 	{
 		return (iNum2-iNum);
 	}
-
-	return 0;
 }
 
 CL_SkillsOffensive( iAttacker, iVictim, iHitPlace )
@@ -261,17 +255,16 @@ CL_SkillsOffensive( iAttacker, iVictim, iHitPlace )
 	iSkillLevel = SM_GetSkillLevel( iAttacker, PASS_ORB );
 	if ( iSkillLevel > 0 )
 	{
-
 		if ( random_float( 0.0, 1.0 ) <= p_orb[p_data[iAttacker][P_LEVEL]] )
 		{
 			new vVictimOrigin[3];
 			get_user_origin( iVictim, vVictimOrigin );
-			
+
 			vVictimOrigin[2] -= 20;
-			
+
 			// Create the orb effect
 			Create_TE_SPRITE( vVictimOrigin, g_iSprites[SPR_WAVE], 10, 200 );
-			
+
 			// Play the orb sound
 			emit_sound( iVictim, CHAN_STATIC, g_szSounds[SOUND_ANNIHILATION], 1.0, ATTN_NORM, 0, PITCH_NORM );
 
@@ -290,22 +283,20 @@ CL_SkillsOffensive( iAttacker, iVictim, iHitPlace )
 	iSkillLevel = SM_GetSkillLevel( iAttacker, SKILL_CARRIONBEETLES );
 	if ( iSkillLevel > 0 )
 	{
-
 		if ( random_float( 0.0, 1.0 ) <= p_carrion[iSkillLevel-1] )
 		{
 			new vVictimOrigin[3], vAttackerorigin[3];
 			get_user_origin( iVictim, vVictimOrigin );
 			get_user_origin( iAttacker, vAttackerorigin );
-			
+
 			// Create the Carrion Beetle effect
 			Create_TE_SPRITETRAIL( vAttackerorigin, vVictimOrigin, g_iSprites[SPR_BEETLE], 15, 15, 1, 2, 6 );
-			
+
 			// Play the carrion beetle sound
 			emit_sound( iVictim, CHAN_STATIC, g_szSounds[SOUND_CARRION], 1.0, ATTN_NORM, 0, PITCH_NORM );
 
 			WC3_Damage( iVictim, iAttacker, CARRIONBEETLE_DAMAGE, CSW_CARRION, iHitPlace );
 		}
-
 		else if ( get_pcvar_num( CVAR_wc3_psychostats ) )
 		{
 			new WEAPON = CSW_CARRION - CSW_WAR3_MIN;
@@ -313,19 +304,17 @@ CL_SkillsOffensive( iAttacker, iVictim, iHitPlace )
 			iStatsShots[iAttacker][WEAPON]++;
 		}
 	}
-	
+
 
 	// Impale
 	iSkillLevel = SM_GetSkillLevel( iAttacker, SKILL_IMPALE );
 	if ( iSkillLevel > 0 )
 	{
-
 		if ( random_float( 0.0, 1.0 ) <= p_impale[iSkillLevel-1] )
 		{
-
 			// Play the impale sound
 			emit_sound( iVictim, CHAN_STATIC, g_szSounds[SOUND_IMPALE], 1.0, ATTN_NORM, 0, PITCH_NORM );
-			
+
 			new Float:vVelocity[3];
 			entity_get_vector( iVictim, EV_VEC_velocity, vVelocity );
 
@@ -351,29 +340,27 @@ CL_SkillsDefensive( iAttacker, iVictim, iDamage, iHitPlace )
 	iSkillLevel = SM_GetSkillLevel( iVictim, SKILL_SPIKEDCARAPACE );
 	if ( iSkillLevel > 0 )
 	{
-
 		new iTemp = floatround( float( iDamage ) * p_spiked[iSkillLevel-1] );
-		
+
 		// Give the victim some armor...
 		if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 		{
 			new CsArmorType:ArmorType;
 			new iCurArmor = cs_get_user_armor( iVictim, ArmorType );
 			new iMaxArmor = SHARED_GetMaxArmor( iVictim );
-			
+
 			// Then set their armor to be the max
 			if ( iCurArmor + iTemp > iMaxArmor )
 			{
 				cs_set_user_armor( iVictim, iMaxArmor, ArmorType );
 			}
-			
 			// Just give them some bonus armor
 			else
 			{
 				cs_set_user_armor( iVictim, iCurArmor + iTemp, ArmorType );
 			}
 		}
-		
+
 		if ( is_user_alive( iAttacker ) )
 		{
 			// Damage our attacker!
@@ -381,7 +368,7 @@ CL_SkillsDefensive( iAttacker, iVictim, iDamage, iHitPlace )
 
 			// Make the user glow!
 			SHARED_Glow( iAttacker, ( 3 * iTemp ), 0, 0, 0 );
-			
+
 			// Create a screen fade
 			Create_ScreenFade( iAttacker, (1<<10), (1<<10), (1<<12), 255, 0, 0, iTemp );
 		}

@@ -112,7 +112,7 @@
 #define TE_EXPLFLAG_NONE	0
 
 #define MAX_NAME_LENGTH 32
-#define MAX_VAR_LENGTH 64 
+#define MAX_VAR_LENGTH 64
 #define RACE_SKILL_LENGTH 64
 #define RACE_SKILL_LENGTH_F 63
 #define RACE_NAME_LENGTH 64
@@ -154,7 +154,7 @@
 #define HITGROUP_RIGHTLEG		7 // 128
 
 /*	 Weapon IDs	 */
-#define CSW_WORLDSPAWN			0 
+#define CSW_WORLDSPAWN			0
 
 #if !defined CSW_GALIL
 	#define CSW_GALIL			14
@@ -195,11 +195,11 @@
 #define RACE_CRYPT				8
 #define RACE_CHAMELEON			9
 
-// team ids 
-#define UNASSIGNED 0 
-#define TS 1 
-#define CTS 2 
-#define AUTO_TEAM 5 
+// team ids
+#define UNASSIGNED 0
+#define TS 1
+#define CTS 2
+#define AUTO_TEAM 5
 
 // New team ID defines
 #define TEAM_T		1
@@ -241,7 +241,7 @@
 
 // ***************************************************************************
 // The following section contains defines for the player_data array, it pretty much
-// stores everything.  
+// stores everything.
 //		P_ is within player_data
 //		PB_ is within player_data_bool array
 // ***************************************************************************
@@ -350,7 +350,7 @@
 #define RESPAWN_PHOENIX			2
 #define RESPAWN_VENGEANCE		3
 
-// Enemies who have immunity w/in this radius will cause blink to fail 
+// Enemies who have immunity w/in this radius will cause blink to fail
 #define IMMUNITY_RADIUS		500
 
 #define SPAWN_DELAY			0.2
@@ -413,13 +413,21 @@ new bool:g_buyTime
 // Counter-Strike/Condition Zero Skins
 new SKIN_CT[5][]		= { "sas"		, "gsg9"	, "urban"		, "gign"	, "spetsnaz" };
 new SKIN_T[5][]			= { "arctic"	, "leet"	, "guerilla"	, "terror"	, "militia" };
-	
+
 // Day of Defeat Player skins
 new SKIN_AXIS[2][]		= { "axis-inf"	, "axis-para" };
 new SKIN_ALLIES[2][]	= { "us-inf"	, "us-para" };
 new SKIN_BRIT[1][]		= { "brit-inf" };
 
 new CsArmorType:g_ArmorType[33];
+
+// Counter-Strike Weapon names
+new g_sWeaponNames[31][] =
+{
+	"---", "P228", "---", "Scout", "HE Grenade", "XM1014", "C4", "Mac10", "AUG", "Smoke Grenade", "Elite", "Five Seven",
+	"UMP45", "SG550", "Galil", "Famas", "USP", "Glock18", "AWP", "MP5", "M249", "M3", "M4A1", "TMP",
+	"G3SG1", "Flashbang", "Deagle", "SG552", "AK47", "Knife", "P90"
+};
 
 /*  END - CSTRIKE VARIABLES */
 

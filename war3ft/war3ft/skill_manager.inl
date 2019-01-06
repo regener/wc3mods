@@ -45,7 +45,6 @@ SM_Init()
 	g_SkillOwner[ULTIMATE_LOCUSTSWARM		]	= RACE_CRYPT;
 	g_SkillOwner[PASS_ORB					]	= RACE_CRYPT;
 
-
 	// Set up the skill types
 	g_SkillType[SKILL_VAMPIRICAURA			]	= SKILL_TYPE_TRAINABLE;
 	g_SkillType[SKILL_UNHOLYAURA			]	= SKILL_TYPE_TRAINABLE;
@@ -90,7 +89,6 @@ SM_Init()
 	g_SkillType[SKILL_CARRIONBEETLES		]	= SKILL_TYPE_TRAINABLE;
 	g_SkillType[ULTIMATE_LOCUSTSWARM		]	= SKILL_TYPE_ULTIMATE;
 	g_SkillType[PASS_ORB					]	= SKILL_TYPE_PASSIVE;
-
 
 	// Set up the skill order
 	g_SkillOrder[SKILL_VAMPIRICAURA			]	= SKILL_POS_1;
@@ -239,6 +237,11 @@ SM_GetSkillByPos( id, iPos )
 // Returns the user's level for a certain skill
 SM_GetSkillLevel( id, skill_id, debug_id = -1 )
 {
+	if( is_user_bot( id ) )
+	{
+		return 0;
+	}
+	
 	if ( !SM_IsValidSkill( skill_id ) )
 	{
 		WC3_Log( false, "[0] Invalid skill: %d [%d]", skill_id, debug_id );
@@ -266,6 +269,11 @@ SM_GetSkillLevel( id, skill_id, debug_id = -1 )
 // Set the user's skill level for a given skill
 SM_SetSkillLevel( id, skill_id, iLevel, iDebugID )
 {
+	if( is_user_bot( id ) )
+	{
+		return;
+	}
+	
 	if ( !SM_IsValidSkill( skill_id ) )
 	{
 		WC3_Log( false, "[1] Invalid skill: %d (%d)", skill_id, iDebugID );
@@ -280,7 +288,7 @@ SM_SetSkillLevel( id, skill_id, iLevel, iDebugID )
 	{
 		return;
 	}
-	
+
 	// We shouldn't be setting a passive skill's level!
 	if ( g_SkillType[skill_id] == SKILL_TYPE_PASSIVE )
 	{
@@ -300,7 +308,7 @@ SM_SetSkillLevel( id, skill_id, iLevel, iDebugID )
 
 		return;
 	}
-	
+
 	//static iLastSkillLevel;
 	//iLastSkillLevel = g_PlayerSkillLevel[id][skill_id];
 
@@ -318,7 +326,7 @@ SM_SetSkillLevel( id, skill_id, iLevel, iDebugID )
 // Checks to see if a skill ID is valid
 bool:SM_IsValidSkill( skill_id )
 {
-	if ( skill_id >= 0 && skill_id < MAX_SKILLS )
+	if ( 0 <= skill_id < MAX_SKILLS )
 	{
 		return true;
 	}
@@ -329,7 +337,6 @@ bool:SM_IsValidSkill( skill_id )
 // Function will get a random skill for the user's current skills (great for bots)
 SM_GetRandomSkill( id )
 {
-
 	// Make sure a skill is available
 	if ( !SM_SkillAvailable( id ) )
 	{
@@ -337,7 +344,6 @@ SM_GetRandomSkill( id )
 	}
 
 	static iRandomSkill;
-	
 
 	// Initial condition selected
 	iRandomSkill = random_num( 0, MAX_SKILLS - 1 );
@@ -352,7 +358,6 @@ SM_GetRandomSkill( id )
 
 SM_GetRandomSkillByType( id, type )
 {
-
 	// Make sure a skill is available
 	if ( !SM_SkillAvailable( id ) )
 	{
@@ -360,7 +365,6 @@ SM_GetRandomSkillByType( id, type )
 	}
 
 	static iRandomSkill;
-	
 
 	// Initial condition selected
 	iRandomSkill = random_num( 0, MAX_SKILLS - 1 );
@@ -455,10 +459,9 @@ SM_DebugPrint( id )
 	static iSkillID;
 	new szSkillName[32];
 
-
 	// **** Trainable ****
 	WC3_Log( true, "=== Trainable ===" );
-	
+
 	iSkillID = SM_GetSkillOfType( id, SKILL_TYPE_TRAINABLE );
 	while ( iSkillID != -1 )
 	{
@@ -471,7 +474,7 @@ SM_DebugPrint( id )
 
 	// **** Ultimates ****
 	WC3_Log( true, "=== Ultimates ===" );
-	
+
 	iSkillID = SM_GetSkillOfType( id, SKILL_TYPE_ULTIMATE );
 	while ( iSkillID != -1 )
 	{
@@ -484,7 +487,7 @@ SM_DebugPrint( id )
 
 	// **** Passive ****
 	WC3_Log( true, "=== Passive ===" );
-	
+
 	iSkillID = SM_GetSkillOfType( id, SKILL_TYPE_PASSIVE );
 	while ( iSkillID != -1 )
 	{
@@ -544,7 +547,7 @@ SM_GiveRandomSkillPoint( id )
 	if ( p_data[id][P_LEVEL] >= MIN_ULT_LEVEL )
 	{
 		new iUltSkill = SM_GetRandomSkillByType( id, SKILL_TYPE_ULTIMATE );
-		
+
 		if ( iUltSkill != -1 && SM_GetSkillLevel( id, iUltSkill, 11 ) == 0 )
 		{
 			// Set up the skill...
@@ -555,7 +558,7 @@ SM_GiveRandomSkillPoint( id )
 			return true;
 		}
 	}
-	
+
 	new iRandomSkill = SM_GetRandomSkillByType( id, SKILL_TYPE_TRAINABLE );
 	new iSkillLevel = SM_GetSkillLevel( id, iRandomSkill, 12 );
 
@@ -567,7 +570,7 @@ SM_GiveRandomSkillPoint( id )
 		iRandomSkill = SM_GetRandomSkillByType( id, SKILL_TYPE_TRAINABLE );
 		iSkillLevel = SM_GetSkillLevel( id, iRandomSkill, 13 );
 	}
-			
+
 	// Set up the skill...
 	SM_SetSkill( id, iRandomSkill );
 

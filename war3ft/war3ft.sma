@@ -31,30 +31,22 @@
 
 #pragma tabsize			0
 //#pragma semicolon		1
+#pragma dynamic 32768
 
 new const WC3NAME[]		=	"Warcraft 3 Frozen Throne";
 new const WC3AUTHOR[]	=	"Geesu, Avanderik & YamiKaitou";
 //new const WC3VERSION[]	=	"3.0 RC14";
 new const WC3DATE[]		=	__DATE__;
 
-// Let AMX X know that we NEED these modules (as of amx x 1.75)
-#pragma reqclass	xstats
-#pragma reqlib		engine
-#pragma reqlib		fun
-#pragma reqlib		fakemeta
-#pragma reqlib		cstrike
-#pragma reqlib		dodfun
-#pragma loadlib		sqlite
-#pragma loadlib		mysql
-
+// We NEED these modules
 #include <amxmodx>
 #include <amxmisc>
 #include <engine>
 #include <fun>
 #include <fakemeta>
-#include <cstrike>
 #include <dodfun>
 #include <dodx>
+#include <cstrike>
 #include <dbi>
 #include <sqlx>
 #include <hamsandwich>
@@ -115,14 +107,14 @@ new const WC3DATE[]		=	__DATE__;
 public plugin_init()
 {
 	register_plugin( WC3NAME, WC3FT_VERSION, WC3AUTHOR );
-	
+
 	WC3_DetermineGame();
 
 	gmsgDeathMsg		= get_user_msgid( "DeathMsg"	);
 	gmsgScreenFade		= get_user_msgid( "ScreenFade"	);
 	gmsgScreenShake		= get_user_msgid( "ScreenShake"	);
 	gmsgScoreInfo		= get_user_msgid( "ScoreInfo"	);
-	
+
 	register_concmd( "war3_version"		, "CMD_Handler"		, -1 );
 	register_concmd( "playerskills"		, "CMD_Handler"		, -1 );
 
@@ -180,7 +172,7 @@ public plugin_init()
 	register_srvcmd( "changexp"			, "ADMIN_ServerHandler"	);
 
 	// Register forwards (from fakemeta)
-	register_forward( FM_TraceLine		, "TRIGGER_TraceLine"	);
+	register_forward( FM_TraceLine		, "TRIGGER_TraceLine", 1	);
 
 	register_event( "DeathMsg"			, "on_DeathMsg"		, "a"								);
 	register_event( "CurWeapon"			, "on_CurWeapon"	, "be"	, "1=1"						);
@@ -209,7 +201,7 @@ public plugin_init()
 		register_event( "SendAudio"		, "on_CTWin"			, "a"	, "2=%!MRAD_ctwin"					);
 		register_event( "ArmorType"		, "on_ArmorType"		, "be"										);
 		register_event( "Battery"		, "on_Battery"			, "be"										);
-		register_event( "WeapPickup"	, "on_WeapPickup"		, "b"										); 
+		register_event( "WeapPickup"	, "on_WeapPickup"		, "b"										);
 		register_event( "StatusValue"	, "on_ShowStatus"		, "be"	, "1=2"		,"2!0"					);
 		register_event( "StatusValue"	, "on_HideStatus"		, "be"	, "1=1"		,"2=0"					);
 		register_event( "SetFOV"		, "on_Zoom"				, "be"										);
@@ -224,7 +216,7 @@ public plugin_init()
 
 		// Steam
 		register_clcmd( "hegren"	, "cmd_hegren"	);
-		
+
 		// Old style menu (now its jointeam client command)
 		register_menucmd( register_menuid( "Team_Select" , 1 )	, (1<<0)|(1<<1)|(1<<4)	, "cmd_Teamselect" );
 
@@ -254,7 +246,7 @@ public plugin_init()
 
 	register_concmd( "test", "test" );
 	register_concmd( "test2", "test2" );
-	
+
 }
 
 public test2(id)
@@ -290,7 +282,7 @@ public test(id)
 		WC3_Log( true, "**** %s ****", szName );
 
 		SM_DebugPrint( players[i] );
-		
+
 		WC3_Log( true, " %s ", szName );
 	}
 }
@@ -310,12 +302,11 @@ public plugin_end()
 	{
 		return;
 	}
-	
+
 	FWD_Destroy();
 	DB_SaveAll( false );
 	DB_Prune();
 	DB_Close();
-
 
 	return;
 }
@@ -324,7 +315,7 @@ public plugin_precache()
 {
 	// Build version number first
 	formatex( WC3FT_VERSION, charsmax( WC3FT_VERSION ), "%d.%d.%d-dev", WC3FT_V_MAJOR, WC3FT_V_MINOR, WC3FT_V_RELEASE );
-	
+
 	WC3_Precache();
 }
 
@@ -338,7 +329,7 @@ public client_putinserver( id )
 	// Check for steam ID pending
 	static szPlayerID[32];
 	get_user_authid( id, szPlayerID, 31 );
-	
+
 	// Then the player doesn't have a steam id, lets make them reconnect
 	if ( equal(szPlayerID, "STEAM_ID_PENDING") )
 	{
@@ -349,11 +340,11 @@ public client_putinserver( id )
 	DB_FetchUniqueID( id );
 
 	p_data_b[id][PB_ISCONNECTED] = true;
-	
+
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
-		// Check user's cvar if the user isn't a bot and if we're not running a 64-bit server
-		if ( !is_user_bot( id ) && !is_amd64_server() )
+		// Check user's cvar if the user isn't a bot
+		if ( !is_user_bot( id ) )
 		{
 			query_client_cvar( id, "cl_minmodels", "_CS_CheckMinModelsValue" );
 		}
@@ -394,7 +385,6 @@ public client_connect( id )
 	WC3_PlayerInit( id );
 
 	client_cmd( id, "hud_centerid 0" );
-
 
 	p_data[id][P_RESPAWNBY]				= 0;
 	p_data[id][P_SPECMODE]				= 0;
@@ -446,11 +436,11 @@ public client_connect( id )
 	}
 
 	CS_GetIcon( id );
-	
+
 	return;
 }
 
-public client_disconnect( id )
+public client_disconnected( id )
 {
 	if ( !WC3_Check() )
 	{
@@ -472,7 +462,7 @@ public client_disconnect( id )
 	p_data_b[id][PB_JUSTJOINED]		= false;
 	p_data_b[id][PB_ISCONNECTED]	= false;
 	bIgnoreArmorSet[id]				= false;
-	
+
 	// Reset xp assist
 	for ( new i = 0; i < MAXPLAYERS; i++ )
 	{
@@ -517,14 +507,13 @@ public client_disconnect( id )
 				case CSW_ORB:			LANG_GetSkillName( PASS_ORB					, LANG_SERVER,	szWeapon	, 63, 29 );
 				case CSW_CONCOCTION:	LANG_GetSkillName( PASS_UNSTABLECONCOCTION	, LANG_SERVER,	szWeapon	, 63, 30 );
 			}
-			
+
 			replace( szWeapon, 63, " ", "_" );
 
 			new WEAPON = iWeap - CSW_WAR3_MIN;
-			
+
 			if ( iStatsShots[id][WEAPON] || iStatsHits[id][WEAPON] || iStatsKills[id][WEAPON] ||  iStatsHS[id][WEAPON] || iStatsTKS[id][WEAPON] || iStatsDamage[id][WEAPON] || iStatsDeaths[id][WEAPON] || iStatsHead[id][WEAPON] || iStatsChest[id][WEAPON] || iStatsStomach[id][WEAPON] || iStatsLeftArm[id][WEAPON] || iStatsRightArm[id][WEAPON] || iStatsLeftLeg[id][WEAPON] || iStatsRightLeg[id][WEAPON] )
 			{
-
 				// Counter-Strike/Condition Zero log format is different than the DOD
 				if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 				{
@@ -536,9 +525,9 @@ public client_disconnect( id )
 				{
 					log_message("^"%s<%d><%s><%s>^" triggered ^"weaponstats^" (weapon ^"%s^") (shots ^"%d^") (hits ^"%d^") (kills ^"%d^") (headshots ^"%d^") (tks ^"%d^") (damage ^"%d^") (deaths ^"%d^") (score ^"%d^")", szName, iUserid, szAuthid, szTeam, szWeapon, iStatsShots[id][WEAPON], iStatsHits[id][WEAPON], iStatsKills[id][WEAPON], iStatsHS[id][WEAPON], iStatsTKS[id][WEAPON], iStatsDamage[id][WEAPON], iStatsDeaths[id][WEAPON], 0 );
 				}
-				
+
 				log_message("^"%s<%d><%s><%s>^" triggered ^"weaponstats2^" (weapon ^"%s^") (head ^"%d^") (chest ^"%d^") (stomach ^"%d^") (leftarm ^"%d^") (rightarm ^"%d^") (leftleg ^"%d^") (rightleg ^"%d^")", szName, iUserid, szAuthid, szTeam, szWeapon, iStatsHead[id][WEAPON], iStatsChest[id][WEAPON], iStatsStomach[id][WEAPON], iStatsLeftArm[id][WEAPON], iStatsRightArm[id][WEAPON], iStatsLeftLeg[id][WEAPON], iStatsRightLeg[id][WEAPON] );
-			
+
 				iStatsShots[id][WEAPON]		= 0;
 				iStatsHits[id][WEAPON]		= 0;
 				iStatsKills[id][WEAPON]		= 0;
@@ -569,11 +558,9 @@ public client_PreThink( id )
 	{
 		if ( is_user_alive( id ) )
 		{
-			
 			// Counter-Strike or Condition Zero
 			if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 			{
-
 				// This is used so we can't hear the undead's footsteps at level 3
 				if ( SM_GetSkillLevel( id, SKILL_UNHOLYAURA ) > 0 && !p_data_b[id][PB_STUNNED] && !p_data_b[id][PB_SLOWED] )
 				{
@@ -597,10 +584,9 @@ public client_PreThink( id )
 			// Day of Defeat
 			else if ( g_MOD == GAME_DOD )
 			{
-
 				// Set the user's speed
 				SHARED_SetSpeed( id );
-				
+
 				static iSkillLevel;
 				iSkillLevel = SM_GetSkillLevel( id, SKILL_UNHOLYAURA );
 
@@ -627,20 +613,18 @@ public client_PreThink( id )
 				entity_set_int( id, EV_INT_flTimeStepSound, 999 );
 			}
 		}
-		
+
 		// User is dead
 		else
 		{
-
 			// Check to see if spectated player has changed
 			new iTarget = entity_get_int( id, EV_INT_iuser2 );
-			
+
 			new Float:fTime = halflife_time();
 
 			// Then we are looking at a new player or the last hud message has disappeared
 			if ( g_iSpectatingID[id] != iTarget || g_fLastSpecDisplay[id] <= fTime )
 			{
-
 				// We have a valid target!!
 				if ( SHARED_ValidPlayer( iTarget ) && iTarget != id )
 				{
@@ -664,7 +648,7 @@ public plugin_natives()
 	set_error_filter( "error_filter" );
 }
 
-public error_filter( error_code, bool:debugging, message[] ) 
+public error_filter( error_code, bool:debugging, message[] )
 {
 	new szBuffer[256];
 	dbg_fmt_error( szBuffer, 255 );
@@ -703,7 +687,6 @@ public module_filter( const module[] )
 	{
 		return PLUGIN_HANDLED;
 	}
-
 	// Dammit plugin can't load now :/ - technically we should never get here unless the module doesn't exist in the modules folder
 	else
 	{
@@ -711,8 +694,6 @@ public module_filter( const module[] )
 
 		return PLUGIN_CONTINUE;
 	}
-
-	return PLUGIN_HANDLED;
 }
 
 public native_filter( const name[], index, trap )

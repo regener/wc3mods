@@ -43,7 +43,7 @@
 
 // Item Variables
 new g_iShopMenuItems[33][MAX_PLAYER_ITEMS];			// Holds the player's current items
-new g_iFutureItem[33];                              // Holds the item that the player wants to buy 
+new g_iFutureItem[33];                              // Holds the item that the player wants to buy
 
 new g_iTotalRings[33];								// Holds the number of rings the player has
 new g_iNecklaceCharges[33];							// Holds the number of charges left in the player's necklace

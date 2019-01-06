@@ -31,7 +31,6 @@ public SH_HealingWave( id )
 // We don't need to ever actually "turn this off" since this task will take care of itself
 public _SH_HealingWave( id )
 {
-	
 	if ( id >= TASK_WAVE )
 	{
 		id -= TASK_WAVE;
@@ -42,7 +41,7 @@ public _SH_HealingWave( id )
 	{
 		return;
 	}
-	
+
 	static iSkillLevel;
 	iSkillLevel = SM_GetSkillLevel( id, SKILL_HEALINGWAVE );
 
@@ -58,35 +57,34 @@ public _SH_HealingWave( id )
 	{
 		set_task( p_heal[iSkillLevel-1], "_SH_HealingWave", TASK_WAVE + id );
 	}
-	
+
 	// Prevent healing if this player is hexed
 	if ( p_data_b[id][PB_HEXED] )
 	{
 		return;
 	}
 
-
 	new players[32], numberofplayers, targetid, targetorigin[3], origin[3];
 	new iTeam = get_user_team( id );
 
 	get_user_origin( id, origin );
 	get_players( players, numberofplayers, "a" );
-	
+
 	// Loop through each player and check to see if one is close enough to be healed
 	for ( new i = 0; i < numberofplayers; i++ )
 	{
 		targetid = players[i];
-		
+
 		// User is on the caster's team
 		if ( p_data_b[targetid][PB_ISCONNECTED] && get_user_team( targetid ) == iTeam )
 		{
 			get_user_origin( targetid, targetorigin );
-			
+
 			// User is close enough
 			if ( get_distance(origin, targetorigin) < SH_HEALING_WAVE_RANGE )
 			{
 				get_user_origin( targetid, origin )
-				
+
 				// User needs health
 				if ( get_user_health( targetid ) + 1 <= get_user_maxhealth( targetid ) )
 				{
@@ -115,10 +113,10 @@ public _SH_RemoveHex( id )
 	{
 		return PLUGIN_HANDLED;
 	}
-	
+
 	p_data_b[id][PB_CAN_RENDER] = true;
 	p_data_b[id][PB_HEXED]		= false;
-	
+
 	if ( is_user_alive( id ) )
 	{
 		// Reset the user's speed
@@ -166,7 +164,6 @@ SH_SerpentWard( id )
 			//client_print( id, print_chat, "[DEBUG] Total wards increased to %d (total given so far: %d)", p_data[id][P_SERPENTCOUNT], g_SH_SerpentGiven[id] );
 		}
 	}
-	
 	// User should not have any!
 	else
 	{
@@ -179,7 +176,6 @@ SH_SerpentWard( id )
 
 public SH_PlaceSerpentWard( id )
 {
-
 	// User is hexed, can't use any skills
 	if ( p_data_b[id][PB_HEXED] )
 	{
@@ -189,7 +185,6 @@ public SH_PlaceSerpentWard( id )
 	// User is alive we can place a ward!
 	else if ( is_user_alive( id ) && SM_GetSkillLevel( id, SKILL_SERPENTWARD ) > 0 && p_data[id][P_SERPENTCOUNT] > 0 )
 	{
-
 		// Serpent Ward
 		if ( SH_CanPlaceWard( id ) )
 		{
@@ -230,7 +225,6 @@ public _SH_ResetBombCheck()
 
 public _SH_DrawSerpentWard( parm[5] )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
@@ -272,7 +266,7 @@ public _SH_DrawSerpentWard( parm[5] )
 	origin[0]=parm[0]
 	origin[1]=parm[1]
 	origin[2]=parm[2]
-	
+
 	// Set up the top of the ward
 	start[0] = origin[0]
 	start[1] = origin[1]
@@ -299,7 +293,7 @@ public _SH_DrawSerpentWard( parm[5] )
 			green	= 0;
 		}
 	}
-	
+
 	else if ( g_MOD == GAME_DOD )
 	{
 		if ( parm[4] == AXIS )
@@ -324,7 +318,7 @@ public _SH_DrawSerpentWard( parm[5] )
 	new targetid, targetorigin[3];
 
 	get_players( players, numberofplayers, "a" );
-	
+
 	for ( new i = 0; i < numberofplayers; i++ )
 	{
 		targetid = players[i];
@@ -357,7 +351,7 @@ public _SH_DrawSerpentWard( parm[5] )
 bool:SH_CanPlaceWard( id )
 {
 	new vPlayerOrigin[3];
- 	get_user_origin( id, vPlayerOrigin );
+	get_user_origin( id, vPlayerOrigin );
 
 	// Make sure the user isn't trying to place a ward near a hostage
 	if ( SHARED_NearObjective( vPlayerOrigin ) == OBJENT_HOSTAGE )
@@ -366,56 +360,55 @@ bool:SH_CanPlaceWard( id )
 	}
 
 	// Make sure the user isn't trying to place a ward near the bomb
- 	new Float:vEntOrigin[3];
- 	new vEntityOrigin[3];
- 	
- 	new iEnt = find_ent_by_model( -1, "grenade", "models/w_c4.mdl" )
- 	
-	if ( iEnt && is_valid_ent( iEnt ) ) 
+	new Float:vEntOrigin[3];
+	new vEntityOrigin[3];
+
+	new iEnt = find_ent_by_model( -1, "grenade", "models/w_c4.mdl" )
+
+	if ( iEnt && is_valid_ent( iEnt ) )
 	{
-		
-    	entity_get_vector( iEnt, EV_VEC_origin, vEntOrigin )
-    
-    	vEntityOrigin[0] = floatround( vEntOrigin[0] );
-    	vEntityOrigin[1] = floatround( vEntOrigin[1] );
-    	vEntityOrigin[2] = floatround( vEntOrigin[2] );
-    	
-    	if ( get_distance( vPlayerOrigin, vEntityOrigin ) < 250 )
+		entity_get_vector( iEnt, EV_VEC_origin, vEntOrigin )
+
+		vEntityOrigin[0] = floatround( vEntOrigin[0] );
+		vEntityOrigin[1] = floatround( vEntOrigin[1] );
+		vEntityOrigin[2] = floatround( vEntOrigin[2] );
+
+		if ( get_distance( vPlayerOrigin, vEntityOrigin ) < 250 )
 		{
-    		return false;
+			return false;
 		}
 	}
-	
+
 	return true;
 }
 
 bool:SH_CheckWard( parm[5] )
 {
 	new vPlayerOrigin[3];
-	
+
 	vPlayerOrigin[0] = parm[0];
 	vPlayerOrigin[1] = parm[1];
 	vPlayerOrigin[2] = parm[2];
-	
+
 	new Float:vEntOrigin[3];
 	new vEntityOrigin[3];
-	
+
 	new iEnt = find_ent_by_model( -1, "grenade", "models/w_c4.mdl" );
-	
+
 	if ( iEnt && is_valid_ent( iEnt ) )
 	{
 		entity_get_vector( iEnt, EV_VEC_origin, vEntOrigin )
-		
+
 		vEntityOrigin[0] = floatround( vEntOrigin[0] );
 		vEntityOrigin[1] = floatround( vEntOrigin[1] );
 		vEntityOrigin[2] = floatround( vEntOrigin[2] );
-		
+
 		if ( get_distance( vPlayerOrigin, vEntityOrigin ) < 250 )
 		{
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -437,12 +430,12 @@ public SH_Ult_BigBadVoodoo( id )
 	ULT_ResetCooldown( id, get_pcvar_num( CVAR_wc3_ult_cooldown ) + SH_BIGBADVOODOO_DURATION, false );
 
 	ULT_Icon( id, ICON_FLASH );
-	
+
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
 		Create_BarTime( id, SH_BIGBADVOODOO_DURATION, 0 );
 	}
-		
+
 	emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_VOODOO], 1.0, ATTN_NORM, 0, PITCH_NORM );
 
 	set_user_rendering( id, kRenderFxGlowShell, 255, 245, 50, kRenderNormal, 16 );
@@ -483,7 +476,6 @@ public SH_Ult_Remove( id )
 
 SH_SkillsOffensive( iAttacker, iVictim )
 {
-
 	static iSkillLevel;
 
 	// Hex
@@ -493,11 +485,10 @@ SH_SkillsOffensive( iAttacker, iVictim )
 	{
 		if ( random_float( 0.0, 1.0 ) <= p_hex[iSkillLevel-1] )
 		{
-						
-			// We need to identify the victim as slowed + hexed			
+			// We need to identify the victim as slowed + hexed
 			p_data_b[iVictim][PB_HEXED] = true
 			p_data_b[iVictim][PB_SLOWED] = true;
-				
+
 			// Slow the user's speed
 			SHARED_SetSpeed( iVictim );
 
@@ -551,13 +542,13 @@ SH_SkillsDefensive( iAttacker, iVictim )
 		if ( random_float( 0.0, 1.0 ) <= p_concoction[iSkillLevel] )
 		{
 			new vOrigin[3], vInitOrigin[3], vAxisOrigin[3], i;
-			
+
 			// Get origin of victim
 			get_user_origin( iVictim, vOrigin );
-			
+
 			// Play sound on attacker
 			emit_sound( iAttacker, CHAN_STATIC, g_szSounds[SOUND_CONCOCTION_CAST], 1.0, ATTN_NORM, 0, PITCH_NORM );
-			
+
 			// Set up the origins for the effect
 			vInitOrigin[0] = vOrigin[0];
 			vInitOrigin[1] = vOrigin[1];
@@ -566,7 +557,7 @@ SH_SkillsDefensive( iAttacker, iVictim )
 			vAxisOrigin[0] = vOrigin[0];
 			vAxisOrigin[1] = vOrigin[1];
 			vAxisOrigin[2] = vOrigin[2] + SH_CONCOCTION_RADIUS;
-			
+
 			// Display the effect on the attacker
 			for ( i = 0; i < 200; i += 25 )
 			{
@@ -579,11 +570,9 @@ SH_SkillsDefensive( iAttacker, iVictim )
 			new players[32], numberofplayers, vTargetOrigin[3];
 			get_players(players, numberofplayers, "a");
 
-			
 			// Loop through all players and see if anyone nearby needs to be damaged
 			for( i = 0; i < numberofplayers; i++ )
 			{
-				
 				// Then we have a target on the other team!!
 				if ( get_user_team( players[i] ) != team )
 				{
@@ -594,14 +583,13 @@ SH_SkillsDefensive( iAttacker, iVictim )
 					{
 						// Damage
 						WC3_Damage( players[i], iVictim, SH_CONCOCTION_DAMAGE, CSW_CONCOCTION, 0 );
-					
+
 						// Let the victim know he hit someone
 						emit_sound( iVictim, CHAN_STATIC, g_szSounds[SOUND_CONCOCTION_HIT], 1.0, ATTN_NORM, 0, PITCH_NORM );
 					}
 				}
 			}
 		}
-
 		else if ( get_pcvar_num( CVAR_wc3_psychostats ) )
 		{
 			new WEAPON = CSW_CONCOCTION - CSW_WAR3_MIN;
@@ -614,7 +602,6 @@ SH_SkillsDefensive( iAttacker, iVictim )
 // This function is called to reset the ability of an attacker to attack a user running big bad voodoo
 public _SH_ResetBigBadAttacker( id )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;

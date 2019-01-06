@@ -1,6 +1,5 @@
 stock get_user_maxhealth( id )
 {
-
 	new maxHealth = 100
 
 	static iSkillLevel;
@@ -11,7 +10,6 @@ stock get_user_maxhealth( id )
 	{
 		maxHealth += iSkillLevel * p_devotion;
 	}
-
 
 	// Player has a health bonus from the Periapt of Health
 
@@ -32,13 +30,12 @@ stock SHARED_IsSecondaryWeapon( iWeaponID )
 			return true;
 		}
 	}
-	
+
 	// Check for Day of Defeat
 	else if ( g_MOD == GAME_DOD )
 	{
 
 	}
-
 
 	return false;
 }

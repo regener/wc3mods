@@ -71,7 +71,6 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-	
 	// User already owns the item and it's not a chargeable item!
 	else if ( ITEM_Has( id, iItem ) > ITEM_NONE && !ITEM_CheckFlag( iItem, ITEM_CHARGEABLE ) )
 	{
@@ -79,15 +78,13 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-	
 	// Make sure these items can be bought if the user is dead
-	else if ( !is_user_alive( id ) && !ITEM_CheckFlag( iItem, ITEM_BUYWHENDEAD ) ) 
+	else if ( !is_user_alive( id ) && !ITEM_CheckFlag( iItem, ITEM_BUYWHENDEAD ) )
 	{
 		client_print( id, print_center, "%L", id, "NOT_PURCHASE_WHEN_DEAD" );
 
 		return false;
 	}
-	
 	// User has necklace + blink, they don't need a necklace
 	else if ( iItem == ITEM_NECKLACE && p_data_b[id][PB_WARDENBLINK] )
 	{
@@ -95,7 +92,6 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-
 	// User doesn't need an ankh if they're going to reincarnate
 	else if ( iItem == ITEM_ANKH && SM_GetSkillLevel( id, SKILL_REINCARNATION ) == 3 && !p_data[id][P_CHANGERACE] && p_data[id][P_RACE] != RACE_CHAMELEON )
 	{
@@ -103,7 +99,6 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-	
 	// User has purchased the maximum allowed rings
 	else if ( g_iTotalRings[id] >= 5 && iItem == ITEM_RING )
 	{
@@ -111,7 +106,6 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-
 	// User has purchased gloves when they're disabled on this map
 	else if ( iItem == ITEM_GLOVES && g_bGlovesDisabled )
 	{
@@ -119,7 +113,6 @@ public ITEM_CanBuy( id, iItem )
 
 		return false;
 	}
-
 	// User is already going to reincarnate weapons because they bought an ankh earlier (probably lost it when died)
 	else if ( ( iItem == ITEM_ANKH && g_bPlayerBoughtAnkh[id] ) || ( iItem == ITEM_MOLE && g_bPlayerBoughtMole[id] ) )
 	{
@@ -133,20 +126,15 @@ public ITEM_CanBuy( id, iItem )
 
 public ITEM_Buy( id, iItem )
 {
-
-	
 	// If the user can buy this item...
 	if ( ITEM_CanBuy( id, iItem ) )
 	{
-
 		// User's items are full
 		if ( ITEM_GetSlot( id ) == ITEM_SLOT_FULL && !ITEM_CheckFlag( iItem, ITEM_USEONBUY ) )
 		{
-
 			// We only care about items being full if this item isn't a use on buy
 			if ( !ITEM_CheckFlag( iItem, ITEM_USEONBUY ) )
 			{
-
 				new bool:bShowReplaceMenu = false;
 
 				// One time use...
@@ -175,7 +163,7 @@ public ITEM_Buy( id, iItem )
 				}
 			}
 		}
-	
+
 		// We're clear!
 
 		// Remove user's money
@@ -202,37 +190,33 @@ bool:ITEM_MenuCanBuyCheck( id )
 	if ( !get_pcvar_num( CVAR_wc3_buy_dead ) && !isPlayerAlive )
 	{
 		client_print( id, print_center, "%L", id, "NOT_BUY_ITEMS_WHEN_DEAD" );
-		
+
 		return false;
 	}
-	
 	else if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
 		new isPlayerInBuyZone	= cs_get_user_buyzone( id )
-		
+
 		if ( get_pcvar_num( CVAR_wc3_buy_time ) && !g_buyTime )
 		{
 			client_print( id, print_center, "%L", id, "SECONDS_HAVE_PASSED_CANT_BUY", ( get_cvar_float( "mp_buytime" ) * 60.0 ) );
 
 			return false;
 		}
-		
 		else if ( get_pcvar_num( CVAR_wc3_buy_zone ) && !isPlayerInBuyZone && isPlayerAlive )
 		{
 			client_print( id, print_center, "%L", id, "MUST_BE_IN_BUYZONE" );
-			
+
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
 // Item Preset Function
 ITEM_GiveItem( id, iItem )
-{
-
-	// This item we should use instantly
+{	// This item we should use instantly
 	if ( ITEM_CheckFlag( iItem, ITEM_USEONBUY ) )
 	{
 		if ( iItem == ITEM_TOME )
@@ -242,7 +226,6 @@ ITEM_GiveItem( id, iItem )
 			return;
 		}
 	}
-
 	// They are just adding some charges
 	else
 	{
@@ -284,7 +267,6 @@ ITEM_DisplayMessage( id, iItem )
 			{
 				client_print( id, print_chat,"%s %L", g_MODclient, id, "INFO_SHOPMENU_2", ( ( get_pcvar_float( CVAR_wc3_boots ) ) * 100.00 ) );
 			}
-
 			else if ( g_MOD == GAME_DOD )
 			{
 				client_print( id, print_chat,"%s %L", g_MODclient, id, "DOD_INFO_SHOPMENU_2" );
@@ -330,7 +312,6 @@ ITEM_DisplayMessage( id, iItem )
 			{
 				client_print( id, print_chat, "%s %L", g_MODclient, id, "INFO_SHOPMENU2_1" );
 			}
-
 			else
 			{
 				client_print( id, print_chat, "%s %L", g_MODclient, id, "INFO_SHOPMENU2_1_DEAD" );
@@ -382,11 +363,10 @@ ITEM_DisplayMessage( id, iItem )
 // Give the user bonuses for their items (except charges)
 ITEM_GiveAllBonuses( id )
 {
-
 	// Loop through all item slots
 	for ( new i = ITEM_SLOT_ONE; i <= ITEM_SLOT_TWO; i++ )
 	{
-		
+
 		// Do we have a valid item here?
 		if ( g_iShopMenuItems[id][i] != ITEM_NONE )
 		{
@@ -404,7 +384,6 @@ ITEM_GiveAllBonuses( id )
 // Give our players their bonus!
 ITEM_GiveBonuses( id, iItem )
 {
-	
 	// Display a message regarding the item they just purchased
 	switch ( iItem )
 	{
@@ -505,7 +484,7 @@ ITEM_Equip( id, iItem )
 		{
 			ITEM_Remove( id, iItemSlot );
 		}
-			
+
 		// Set their new item
 		g_iShopMenuItems[id][iItemSlot] = iItem;
 	}
@@ -562,10 +541,10 @@ ITEM_Remove( id, iItemSlot, bResetAnkhMole = true )
 		case ITEM_HEALTH:
 		{
 			new iNewHealth = get_user_health( id ) - get_pcvar_num( CVAR_wc3_health );
-			
+
 			// Lets not kill the user, give them 1 health
 			iNewHealth = ( ( iNewHealth <= 0 ) ? 1 : iNewHealth );
-			
+
 			set_pev( id, pev_dmg_inflictor, 0 );
 			set_user_health( id, iNewHealth );
 		}
@@ -574,7 +553,7 @@ ITEM_Remove( id, iItemSlot, bResetAnkhMole = true )
 		{
 			g_iHelmCharges[id] = 0;
 		}
-		
+
 		case ITEM_SOCK:
 		{
 			SHARED_SetGravity( id );
@@ -594,7 +573,7 @@ ITEM_Remove( id, iItemSlot, bResetAnkhMole = true )
 			{
 				remove_task( TASK_ITEM_RING + id );
 			}
-			
+
 			// Set the number of rings to 0
 			g_iTotalRings[id] = 0;
 		}
@@ -627,7 +606,7 @@ ITEM_RemoveCharge( id, iItem )
 			case ITEM_NECKLACE:
 			{
 				g_iNecklaceCharges[id] -= CHARGE_DISPOSE;
-				
+
 				if ( g_iNecklaceCharges[id] <= 0 )
 				{
 					ITEM_RemoveID( id, iItem );
@@ -637,7 +616,7 @@ ITEM_RemoveCharge( id, iItem )
 			case ITEM_HELM:
 			{
 				g_iHelmCharges[id] -= CHARGE_DISPOSE;
-				
+
 				if ( g_iHelmCharges[id] <= 0 )
 				{
 					ITEM_RemoveID( id, iItem );
@@ -647,7 +626,7 @@ ITEM_RemoveCharge( id, iItem )
 			case ITEM_RING:
 			{
 				g_iTotalRings[id] -= CHARGE_DISPOSE;
-				
+
 				if ( g_iTotalRings[id] <= 0 )
 				{
 					ITEM_RemoveID( id, iItem );
@@ -703,12 +682,11 @@ ITEM_UserDied( id )
 
 ITEM_Offensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace )
 {
-
 	// Claws of Attack
 	if ( ITEM_Has( iAttacker, ITEM_CLAWS ) > ITEM_NONE )
-	{	
+	{
 		WC3_Damage( iVictim, iAttacker, get_pcvar_num( CVAR_wc3_claw ), iWeapon, iHitPlace );
-		
+
 		SHARED_Glow( iAttacker, (2 * get_pcvar_num( CVAR_wc3_claw ) ), 0, 0, 0 );
 
 		Create_ScreenFade( iVictim, (1<<10), (1<<10), (1<<12), 255, 0, 0, g_GlowLevel[iVictim][0] );
@@ -719,7 +697,7 @@ ITEM_Offensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace )
 	{
 		new iHealth = get_user_health( iAttacker );
 		new iBonusHealth = floatround( float( iDamage ) * get_pcvar_float( CVAR_wc3_mask ) );
-		
+
 		new iVampiricBonus = p_data_b[iAttacker][PB_HEXED] ? 0 : SM_GetSkillLevel( iAttacker, SKILL_VAMPIRICAURA );
 
 		// Then the user already gets a bonus, lets lower the total amount the user is going to get
@@ -727,14 +705,13 @@ ITEM_Offensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace )
 		{
 			iBonusHealth /= iVampiricBonus;
 		}
-		
+
 		// User needs to be set to max health
 		if ( iHealth + iBonusHealth > get_user_maxhealth( iAttacker ) )
 		{
 			set_pev( iAttacker, pev_dmg_inflictor, 0 );
 			set_user_health( iAttacker, get_user_maxhealth( iAttacker ) );
 		}
-		
 		// Give them bonus
 		else
 		{
@@ -770,7 +747,7 @@ ITEM_Offensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace )
 ITEM_Tome( id )
 {
 	new iXp = get_pcvar_num( CVAR_wc3_tome ) + XP_GivenByLevel( p_data[id][P_LEVEL] );
-		
+
 	if ( g_MOD == GAME_DOD )
 	{
 		iXp *= 2;
@@ -871,7 +848,6 @@ public _ITEM_Glove_Give( id )
 		}
 	}
 
-
 	if ( g_iGloveTimer[id] > 0 )
 	{
 		WC3_StatusText( id, TXT_TIMER, "%d second(s) until your next grenade", g_iGloveTimer[id] );
@@ -888,7 +864,6 @@ public _ITEM_Glove_Give( id )
 	{
 		give_item( id, "weapon_hegrenade" );
 	}
-
 	// Day of Defeat
 	else if ( g_MOD == GAME_DOD )
 	{
@@ -906,11 +881,10 @@ public _ITEM_Glove_Give( id )
 	WC3_StatusText( id, TXT_TIMER, "%L", id, "ENJOY_A_GRENADE" )
 
 	return;
-}		
+}
 
 ITEM_BuyRings( id )
 {
-
 	new iItemSlot = ITEM_GetSlot( id );
 
 	// Items are full
@@ -925,7 +899,7 @@ ITEM_BuyRings( id )
 
 	new iMoney;
 	new iAdditionalRings = 0;
-	
+
 	while ( g_iTotalRings[id] + iAdditionalRings < 5 )
 	{
 		iMoney = SHARED_GetUserMoney( id );
@@ -936,7 +910,7 @@ ITEM_BuyRings( id )
 		}
 
 		iAdditionalRings++;
-		
+
 		new iNewMoney = iMoney - ITEM_Cost( id, ITEM_RING );
 		SHARED_SetUserMoney( id, iNewMoney, 1 );
 	}
@@ -1009,7 +983,7 @@ ITEM_CheckFlag( iItemID, iFlag )
 		return true;
 	}
 
-	return false;	
+	return false;
 }
 
 // Format the item for WC3_ShowBar
@@ -1023,17 +997,14 @@ ITEM_Format( id, iItem, szItemString[], iLen )
 	{
 		formatex( szItemString, iLen, "%s[%d]", szItemName, g_iNecklaceCharges[id] );
 	}
-
 	else if ( iItem == ITEM_HELM )
 	{
 		formatex( szItemString, iLen, "%s[%d]", szItemName, g_iHelmCharges[id] );
 	}
-
 	else if ( iItem == ITEM_RING )
 	{
 		formatex( szItemString, iLen, "%s[%d]", szItemName, g_iTotalRings[id] );
 	}
-	
 	// All other cases
 	else
 	{

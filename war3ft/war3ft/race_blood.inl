@@ -39,19 +39,19 @@ public BM_ULT_Immolate( iCaster, iTarget )
 
 	new TaskId = TASK_BURNING + iTarget;
 	set_task( 1.0, "BM_ULT_Immolate_DoT", TaskId, parm_DoT, 3 );
-	
+
 	return PLUGIN_HANDLED;
 }
 
 public BM_ULT_Immolate_DoT( parm_DoT[3] )
 {
 	new iCaster = parm_DoT[0];
-    new iTarget = parm_DoT[1];
+	new iTarget = parm_DoT[1];
 	new iCounter = parm_DoT[2];
-	
+
 	// Stop DoT if the max number of ticks is reached
 
-	if ( iCounter > IMMOLATE_DOT ) 
+	if ( iCounter > IMMOLATE_DOT )
 	{
 		BM_ULT_Immolate_Remove( iTarget );
 		return PLUGIN_HANDLED;
@@ -59,8 +59,8 @@ public BM_ULT_Immolate_DoT( parm_DoT[3] )
 
 	// Emit sound and show the burning effect on the player
 
-    new vTargetOrigin[3];
-    get_user_origin( iTarget, vTargetOrigin );
+	new vTargetOrigin[3];
+	get_user_origin( iTarget, vTargetOrigin );
 
 	emit_sound( iTarget, CHAN_STATIC, g_szSounds[SOUND_IMMOLATE_BURNING], 0.5, ATTN_NORM, 0, PITCH_NORM );
 
@@ -72,11 +72,11 @@ public BM_ULT_Immolate_DoT( parm_DoT[3] )
 
 	// If the target is still alive after this, make their screen glow orange and start the task again
 
-    if ( is_user_alive( iTarget ) )
-    {
+	if ( is_user_alive( iTarget ) )
+	{
 		p_data[iTarget][PB_ISBURNING] = true;
 
-        Create_ScreenFade( iTarget, (1<<10), (1<<10), (1<<12), 255, 108, 0, 160 );
+		Create_ScreenFade( iTarget, (1<<10), (1<<10), (1<<12), 255, 108, 0, 160 );
 
 		parm_DoT[2]++;
 
@@ -87,29 +87,27 @@ public BM_ULT_Immolate_DoT( parm_DoT[3] )
 	return PLUGIN_HANDLED;
 }
 
-
-BM_ULT_Immolate_Remove( iTarget ) 
+BM_ULT_Immolate_Remove( iTarget )
 {
 	// Clear global variables and stop the DoT task
-
 	p_data[iTarget][PB_ISBURNING] = false;
 
 	new TaskId = TASK_BURNING + iTarget;
-    remove_task( TaskId, 0 );
+	remove_task( TaskId, 0 );
 
-    return PLUGIN_HANDLED;
+	return PLUGIN_HANDLED;
 }
 
 // Check to see if a player will become a Phoenix
 BM_PhoenixCheck( id )
 {
 	new iSkillLevel = SM_GetSkillLevel( id, SKILL_PHOENIX );
-	
+
 	// Then the user could become a phoenix!
 	if ( iSkillLevel > 0 )
 	{
 		// Should the user be a Phoenix
-		if ( random_float( 0.0, 1.0 ) <= p_phoenix[iSkillLevel-1] ) 
+		if ( random_float( 0.0, 1.0 ) <= p_phoenix[iSkillLevel-1] )
 		{
 			p_data_b[id][PB_PHOENIX] = true;
 		}
@@ -125,7 +123,6 @@ BM_PhoenixCheck( id )
 // This function is called when a user dies
 BM_PhoenixSpawn( id )
 {
-	
 	// If this user is about to respawn, then we don't even want to check
 	if ( p_data[id][P_RESPAWNBY] || g_EndRound )
 	{
@@ -134,20 +131,19 @@ BM_PhoenixSpawn( id )
 
 	new iTeam = get_user_team( id );
 	new iPhoenixID = BM_PhoenixExists( iTeam );
-	
+
 	// Then we have a Phoenix!!
 	if ( iPhoenixID != -1 )
 	{
-
 		// Lets make sure they're not going to revive themself
 		if ( iPhoenixID != id )
 		{
 			// The caster is no longer a Phoenix
 			p_data_b[iPhoenixID][PB_PHOENIX] = false;
-			
+
 			// The user is about to respawn
 			p_data[id][P_RESPAWNBY] = RESPAWN_PHOENIX;
-			
+
 			// Respawn the user
 			set_task( SPAWN_DELAY, "_SHARED_Spawn", TASK_SPAWN + id );
 
@@ -189,7 +185,6 @@ BM_PhoenixExists( iTeam )
 
 BM_PhoenixDOD( id )
 {
-
 	new iSkillLevel = SM_GetSkillLevel( id, SKILL_PHOENIX );
 
 	// Award the player money for having Phoenix
@@ -206,7 +201,7 @@ BM_PhoenixDOD( id )
 
 	// Get the caster's origin
 	get_user_origin( id, vOrigin );
-	
+
 	// Get a list of the current alive players
 	new players[32], numberofplayers;
 	get_players( players, numberofplayers, "a" );
@@ -216,14 +211,14 @@ BM_PhoenixDOD( id )
 	for ( i = 0; i < numberofplayers; i++ )
 	{
 		iTargetID = players[i];
-		
+
 		// Make sure player is on the same team
 		if ( iTargetID != id && get_user_team( iTargetID ) == iTeam )
 		{
-			
+
 			// Get the target's origin
 			get_user_origin( iTargetID, vTargetOrigin );
-			
+
 			// See if they're close enough
 			if ( get_distance( vOrigin, vTargetOrigin ) <= BM_PHOENIX_RANGE )
 			{
@@ -239,7 +234,7 @@ BM_PhoenixDOD( id )
 public _BM_BanishReturn( parm[] )
 {
 	new id = parm[0];
-	
+
 	if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
 		return;
@@ -249,7 +244,7 @@ public _BM_BanishReturn( parm[] )
 	if ( parm[1] > 0 && !g_EndRound )
 	{
 		parm[1]--;
-		
+
 		// Black screen the user!
 		Create_ScreenFade( id, 2, (1<<10), (1<<12), 0, 0, 0, 255 );
 
@@ -284,18 +279,17 @@ BM_SkillsOffensive( iAttacker, iVictim, iDamage )
 	iSkillLevel = SM_GetSkillLevel( iAttacker, SKILL_SIPHONMANA );
 	if ( iSkillLevel > 0 )
 	{
-
 		new iMoney = floatround( p_mana[iSkillLevel-1] * SHARED_GetUserMoney(iVictim) );
-		
+
 		// Remove the money from the victim
 		SHARED_SetUserMoney( iVictim, SHARED_GetUserMoney( iVictim ) - iMoney, 1 );
-		
+
 		// Give the money to the attacker
 		SHARED_SetUserMoney( iAttacker, SHARED_GetUserMoney( iAttacker ) + iMoney, 1 );
 
 		// Make the user glow!
 		SHARED_Glow( iVictim, 0, iDamage, 0, 0 );
-		
+
 		// Create a screen fade (purplish)
 		Create_ScreenFade( iAttacker, (1<<10), (1<<10), (1<<12), 144, 58, 255, g_GlowLevel[iAttacker][1] );
 	}
@@ -304,13 +298,13 @@ BM_SkillsOffensive( iAttacker, iVictim, iDamage )
 BM_SkillsDefensive( iAttacker, iVictim, iDamage )
 {
 	static iSkillLevel;
-	
+
 	// Resistant Skin
 	iSkillLevel = SM_GetSkillLevel( iVictim, PASS_RESISTANTSKIN );
 	if ( iSkillLevel > 0 )
 	{
 		new iBonusHealth = floatround( float( iDamage ) * p_resistant[p_data[iVictim][P_LEVEL]] );
-		
+
 		if ( p_data_b[iVictim][PB_ISCONNECTED] )
 		{
 			set_pev( iVictim, pev_dmg_inflictor, 0 );
@@ -322,17 +316,14 @@ BM_SkillsDefensive( iAttacker, iVictim, iDamage )
 	iSkillLevel = SM_GetSkillLevel( iVictim, SKILL_BANISH );
 	if ( iSkillLevel > 0 )
 	{
-
 		if ( random_float( 0.0, 1.0 ) <= p_banish[iSkillLevel-1] )
 		{
-
 			// Make sure the user isn't banished and that the enemy isn't in the victim's view (victim might be attacking them)
 			if ( !g_bPlayerBanished[iAttacker] && !UTIL_CanSeePlayer( iVictim, iAttacker ) )
 			{
-
 				// Deal some damage
 				WC3_Damage( iAttacker, iVictim, BANISH_DAMAGE, CSW_BANISH, 0 );
-				
+
 				// Play the Banish sound
 				emit_sound( iAttacker, CHAN_STATIC, g_szSounds[SOUND_BANISH], 1.0, ATTN_NORM, 0, PITCH_NORM );
 

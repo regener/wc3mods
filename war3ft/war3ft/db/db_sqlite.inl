@@ -4,14 +4,14 @@
 
 #define TOTAL_SQLITE_TABLES		3
 
-new const szTablesSQLite[TOTAL_SQLITE_TABLES][] = 
+new const szTablesSQLite[TOTAL_SQLITE_TABLES][] =
 {
 	"CREATE TABLE `wc3_player` ( `player_id` INTEGER PRIMARY KEY AUTOINCREMENT, `player_steamid` varchar(25) NOT NULL default '', `player_ip` varchar(20) NOT NULL default '', `player_name` varchar(35) NOT NULL default '', `time` timestamp(14) NOT NULL DEFAULT CURRENT_TIMESTAMP );",
 	"CREATE TABLE `wc3_player_race` ( `player_id` int(8) NOT NULL default '0', `race_id` tinyint(4) NOT NULL default '0', `race_xp` int(8) default NULL, PRIMARY KEY  (`player_id`,`race_id`) );",
 	"CREATE TABLE `wc3_player_skill` ( `player_id` int(8) NOT NULL default '0', `skill_id` tinyint(4) NOT NULL default '0', `skill_level` tinyint(4) NOT NULL default '0', PRIMARY KEY  (`player_id`,`skill_id`) );"
 };
 
-new const szTableNames[TOTAL_SQLITE_TABLES][] = 
+new const szTableNames[TOTAL_SQLITE_TABLES][] =
 {
 	"wc3_player",
 	"wc3_player_race",
@@ -35,7 +35,6 @@ SQLITE_Init()
 
 		return;
 	}
-
 
 	server_print( "[WAR3FT] SQLite database connection successful" );
 
@@ -69,17 +68,17 @@ SQLITE_Init()
 			"integrity_check"	- well it's what it says, we do have to check the
 						  value it returns since it's important
 		PRAGMA commands don't return anything so no need to check the result of the query
-	*/	
+	*/
 
 	query = SQL_PrepareQuery( g_DBConn, "PRAGMA integrity_check" );
-	
+
 	if ( !SQL_Execute( query ) )
 	{
 		SQLITE_Error( query, "PRAGMA integrity_check", 2 );
 
 		return;
 	}
-	
+
 	// Get the integrity check value
 	new szIntegrityCheck[64];
 	if ( SQL_NumResults( query ) > 0 )
@@ -100,7 +99,7 @@ SQLITE_Init()
 
 		return;
 	}
-	
+
 	// Do some synchronous crap
 	new szQuery[128];
 	format( szQuery, 127, "PRAGMA synchronous = %d", SQLITE_SYNC_OFF );
@@ -220,18 +219,18 @@ SQLITE_Save( id )
 			if ( g_SkillType[iSkillID] != SKILL_TYPE_PASSIVE )
 			{
 				iCurrentLevel = SM_GetSkillLevel( id, iSkillID, 16 );
-	
+
 				// Then we need to save this!
 				if ( iCurrentLevel >= 0 && g_iDBPlayerSkillStore[id][iSkillID] != iCurrentLevel )
 				{
 					g_iDBPlayerSkillStore[id][iSkillID] = iCurrentLevel;
 					format( szQuery, 511, "REPLACE INTO `wc3_player_skill` ( `player_id` , `skill_id` , `skill_level` ) VALUES ( '%d', '%d', '%d' );", iUniqueID, iSkillID, iCurrentLevel );
 					query = SQL_PrepareQuery( g_DBConn, szQuery );
-	
+
 					if ( !SQL_Execute( query ) )
 					{
 						SQLITE_Error( query, szQuery, 7 );
-	
+
 						return;
 					}
 				}
@@ -270,7 +269,7 @@ SQLITE_Save_T( id )
 			if ( g_SkillType[iSkillID] != SKILL_TYPE_PASSIVE )
 			{
 				iCurrentLevel = SM_GetSkillLevel( id, iSkillID, 17 );
-	
+
 				// Then we need to save this!
 				if ( iCurrentLevel >= 0 && g_iDBPlayerSkillStore[id][iSkillID] != iCurrentLevel )
 				{
@@ -288,13 +287,12 @@ SQLITE_Save_T( id )
 
 public _SQLITE_Save_T( failstate, Handle:query, error[], errnum, data[], size )
 {
-
 	// Error during the query
 	if ( failstate )
 	{
 		new szQuery[256];
 		SQL_GetQueryString( query, szQuery, 255 );
-		
+
 		SQLITE_ThreadError( query, szQuery, error, errnum, failstate, 1 );
 	}
 }
@@ -343,7 +341,7 @@ SQLITE_GetAllXP( id )
 	{
 		iRace	= SQL_ReadResult( query, 0 );
 		iXP		= SQL_ReadResult( query, 1 );
-		
+
 		// Save the user's XP in an array
 		if ( iRace > 0 && iRace < MAX_RACES + 1 )
 		{
@@ -406,7 +404,7 @@ SQLITE_SetDataForRace( id )
 
 	// Free the handle
 	SQL_FreeHandle( query );
-	
+
 	// Set the race up
 	WC3_SetRaceUp( id );
 
@@ -445,7 +443,7 @@ public _SQLITE_SetDataForRace_T( failstate, Handle:query, error[], errnum, data[
 	{
 		new szQuery[256];
 		SQL_GetQueryString( query, szQuery, 255 );
-		
+
 		SQLITE_ThreadError( query, szQuery, error, errnum, failstate, 3 );
 	}
 
@@ -475,13 +473,13 @@ public _SQLITE_SetDataForRace_T( failstate, Handle:query, error[], errnum, data[
 		while ( SQL_MoreResults( query ) )
 		{
 			SM_SetSkillLevel( id, SQL_ReadResult( query, 0 ), SQL_ReadResult( query, 1 ), 5 );
-			
+
 			SQL_NextRow( query );
 		}
 
 		// Free the handle
 		SQL_FreeHandle( query );
-		
+
 		// Set the race up
 		WC3_SetRaceUp( id );
 
@@ -507,7 +505,7 @@ bool:SQLITE_Connection_Available()
 
 SQLITE_Prune()
 {
-	new const szPruneQuery[SQLITE_TOTAL_PRUNE_QUERY][] = 
+	new const szPruneQuery[SQLITE_TOTAL_PRUNE_QUERY][] =
 	{
 		"DELETE FROM wc3_player_race  WHERE player_id IN ( SELECT `player_id` FROM `wc3_player` WHERE ( (julianday(`time`) + %d) < julianday('now') ) );",
 		"DELETE FROM wc3_player_skill WHERE player_id IN ( SELECT `player_id` FROM `wc3_player` WHERE ( (julianday(`time`) + %d) < julianday('now') ) );"
@@ -545,7 +543,7 @@ SQLITE_UpdateTimestamp( id )
 	new szQuery[256];
 	format( szQuery, 255, "UPDATE `wc3_player` SET time = julianday('now') WHERE ( `player_id` = '%d' )", g_iDBPlayerUniqueID[id] );
 
-	SQL_ThreadQuery( g_DBTuple, "_SQLITE_UpdateTimestamp", szQuery );	
+	SQL_ThreadQuery( g_DBTuple, "_SQLITE_UpdateTimestamp", szQuery );
 }
 
 public _SQLITE_UpdateTimestamp( failstate, Handle:query, error[], errnum, data[], size )
@@ -555,18 +553,15 @@ public _SQLITE_UpdateTimestamp( failstate, Handle:query, error[], errnum, data[]
 	{
 		new szQuery[256];
 		SQL_GetQueryString( query, szQuery, 255 );
-		
+
 		SQLITE_ThreadError( query, szQuery, error, errnum, failstate, 4 );
 	}
-
 	// Query successful, we can do stuff!
 	else
 	{
 		// Free the handle
 		SQL_FreeHandle( query );
 	}
-
-	return;
 }
 
 // The id should be a unique number, so we know what function called it (useful for debugging)
@@ -591,7 +586,7 @@ SQLITE_ThreadError( Handle:query, szQuery[], szError[], iErrNum, failstate, id )
 
 	// Connection failed
 	if ( failstate == TQUERY_CONNECT_FAILED )
-	{	
+	{
 		WC3_Log( true, "[SQLITE] Fail state: Connection Failed" );
 	}
 

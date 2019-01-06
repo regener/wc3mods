@@ -123,7 +123,7 @@ public on_PlayerAction()
 		return;
 	}
 
-	// Spawned with the bomb 
+	// Spawned with the bomb
 	if (equal(sAction,"Spawned_With_The_Bomb"))
 	{
 		g_iPlayerRole[id] = PLR_BOMB_CARRIER;
@@ -134,7 +134,7 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have been awarded %d XP for spawning with the bomb", g_MODclient, iBonusXP );
 		}
 	}
-	// Dropped bomb 
+	// Dropped bomb
 	else if (equal(sAction,"Dropped_The_Bomb"))
 	{
 		g_iPlayerRole[id] = 0;
@@ -145,9 +145,9 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have lost %d XP for dropping the bomb", g_MODclient, -1 * iBonusXP );
 		}
 	}
-	// Picked up bomb 
+	// Picked up bomb
 	else if (equal(sAction,"Got_The_Bomb"))
-	{ 
+	{
 		g_iPlayerRole[id] = PLR_BOMB_CARRIER;
 		new iBonusXP = XP_Give( id, BOMB_PICKUP );
 
@@ -156,7 +156,7 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have been awarded %d XP for picking up the bomb", g_MODclient, iBonusXP );
 		}
 	}
-	// Hostage touched 
+	// Hostage touched
 	else if (equal(sAction,"Touched_A_Hostage"))
 	{
 		g_iPlayerRole[id] = PLR_HOSTAGE_RESCUER;
@@ -167,7 +167,7 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have been awarded %d XP for starting to rescue a hostage", g_MODclient, iBonusXP );
 		}
 	}
-	// Hostage rescued 
+	// Hostage rescued
 	else if (equal(sAction,"Rescued_A_Hostage"))
 	{
 		new iBonusXP = XP_Give( id, RESCUE_HOSTAGE );
@@ -177,7 +177,7 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have been awarded %d XP for rescuing a hostage", g_MODclient, iBonusXP );
 		}
 	}
-	// Hostage killed 
+	// Hostage killed
 	else if (equal(sAction,"Killed_A_Hostage"))
 	{
 		new iBonusXP = XP_Give( id, -1 * KILL_HOSTAGE );
@@ -187,9 +187,9 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have lost %d XP for killing a hostage", g_MODclient, -1 * iBonusXP );
 		}
 	}
-	// VIP spawn 
+	// VIP spawn
 	else if (equal(sAction,"Became_VIP"))
-	{ 
+	{
 		g_iPlayerRole[id] = PLR_VIP;
 		new iBonusXP = XP_Give( id, SPAWN_VIP );
 
@@ -198,7 +198,7 @@ public on_PlayerAction()
 			client_print( id, print_chat, "%s You have gained %d XP for spawning as the VIP", g_MODclient, iBonusXP );
 		}
 	}
-	// VIP escaped 
+	// VIP escaped
 	else if (equal(sAction,"Escaped_As_VIP"))
 	{
 		new iBonusXP = XP_Give( id, ESCAPE_VIP );
@@ -212,19 +212,17 @@ public on_PlayerAction()
 
 XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 {
-
 	// We don't want to give XP to the world
 	if ( iAttacker == 0 )
 	{
 		return;
 	}
-
 	// We don't want to give XP to suiciders
 	else if ( iAttacker == iVictim )
 	{
 		return;
 	}
-	
+
 	new iLevel = p_data[iVictim][P_LEVEL]
 	new iBonusXP, iXP = floatround( XP_GivenByLevel( iLevel ) * fWpnXPMultiplier[iWeaponIndex] );
 
@@ -241,13 +239,12 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 		}
 
 	}
-
 	// Otherwise the player killed the other team
 	else
 	{
 		// Award XP for a kill
 		iBonusXP = XP_Give( iAttacker, iXP );
-		
+
 		if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 		{
 			client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the enemy", g_MODclient, iBonusXP );
@@ -257,7 +254,7 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 		if ( iHeadshot )
 		{
 			iBonusXP = XP_Give( iAttacker, KILL_HEADSHOT );
-			
+
 			if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 			{
 				client_print( iAttacker, print_chat, "%s You have been awarded %d XP for getting a headshot", g_MODclient, iBonusXP );
@@ -275,7 +272,7 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 			{
 				iVictimMaxHealth = get_user_maxhealth( iVictim );
 				fMultiplier = float( g_iDamageDealt[i][iVictim] ) / float( iVictimMaxHealth );
-				
+
 				iAssistLevel = p_data[i][P_LEVEL];
 				iAssistXP = XP_GivenByLevel( iAssistLevel );
 
@@ -294,12 +291,11 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 
 		if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 		{
-			
 			// User killed a hostage rescuer
 			if ( g_iPlayerRole[iVictim] == PLR_HOSTAGE_RESCUER )
 			{
 				iBonusXP = XP_Give( iAttacker, KILL_HOSTAGE_SAVER );
-				
+
 				if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 				{
 					client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the hostage rescuer", g_MODclient, iBonusXP );
@@ -309,7 +305,7 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 			else if ( g_iPlayerRole[iVictim] == PLR_BOMB_DEFUSER )
 			{
 				iBonusXP = XP_Give( iAttacker, KILL_DEFUSER );
-				
+
 				if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 				{
 					client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the bomb defuser", g_MODclient, iBonusXP );
@@ -319,7 +315,7 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 			else if ( g_iPlayerRole[iVictim] == PLR_BOMB_PLANTER )
 			{
 				iBonusXP = XP_Give( iAttacker, KILL_PLANTER );
-				
+
 				if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 				{
 					client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the bomb planter", g_MODclient, iBonusXP );
@@ -329,28 +325,25 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 			else if ( g_iPlayerRole[iVictim] == PLR_BOMB_CARRIER )
 			{
 				iBonusXP = XP_Give( iAttacker, KILL_BOMB_CARRIER );
-				
+
 				if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_kill_obj ) )
 				{
 					client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the bomb carrier", g_MODclient, iBonusXP );
 				}
 			}
-			// user killed the VIP
+			// User killed the VIP
 			else if ( g_iPlayerRole[iVictim] == PLR_VIP )
 			{
 				iBonusXP = XP_Give( iAttacker, KILL_VIP );
-				
+
 				if ( iBonusXP != 0 && get_pcvar_num( CVAR_wc3_show_objectives ) )
 				{
 					client_print( iAttacker, print_chat, "%s You have been awarded %d XP for killing the VIP", g_MODclient, iBonusXP );
 				}
 			}
 		}
-		
-
 		else if ( g_MOD == GAME_DOD )
 		{
-
 
 		}
 
@@ -359,25 +352,28 @@ XP_onDeath( iVictim, iAttacker, iWeaponIndex, iHeadshot )
 	}
 }
 
-
 XP_WinRound( iWinner )
 {
-	
 	new players[32], numberofplayers, i, id;
 	get_players( players, numberofplayers );
 
 	for ( i = 0; i < numberofplayers; i++ )
 	{
 		id = players[i];
+		
+		// Skip if user has no race yet
+		if ( p_data[id][P_RACE] == 0 )
+		{
+			continue;
+		}
 
 		// Is the user on the correct team?
 		if ( get_user_team( id ) == iWinner )
 		{
-
 			new iBonusXP = XP_Give( id, WIN_ROUND );
 
 			if ( get_pcvar_num( CVAR_wc3_show_objectives ) )
-			{				
+			{
 				client_print( id, print_chat, "%s %L", g_MODclient, id, "AWARD_FOR_WINNING_ROUND", iBonusXP );
 			}
 		}
@@ -401,7 +397,6 @@ XP_GetByLevel( iLevel )
 
 	return floatround( iXPLevelShortTerm[iLevel] * fXPMult );
 }
-
 
 XP_GivenByLevel( iLevel )
 {
@@ -427,7 +422,6 @@ bool:XP_MinPlayers()
 	{
 		iNum = get_playersnum();
 	}
-
 	// Ignore bots, spectators, and HLTV
 	else
 	{
@@ -461,7 +455,7 @@ bool:XP_MinPlayers()
 XP_Check( id, bShowGained = true )
 {
 	new iOldLevel = p_data[id][P_LEVEL], i;
-	
+
 	// Make sure the user doesn't have negative experience
 	if ( p_data[id][P_XP] < 0 )
 	{
@@ -488,7 +482,7 @@ XP_Check( id, bShowGained = true )
 	if ( p_data[id][P_LEVEL] > iOldLevel && p_data[id][P_RACE] != 0 && bShowGained )
 	{
 		WC3_StatusText( id, TXT_TOP_CENTER, "%L", id, "YOU_GAINED_A_LEVEL" );
-		
+
 		// Only play the sound if the user is alived!!
 		if ( is_user_alive( id ) )
 		{
@@ -507,7 +501,7 @@ XP_Check( id, bShowGained = true )
 		if ( p_data[id][P_LEVEL] < MIN_ULT_LEVEL )
 		{
 			new iUltimateID = SM_GetSkillOfType( id, SKILL_TYPE_ULTIMATE );
-			
+
 			// Then we need to remove this!
 			if ( SM_GetSkillLevel( id, iUltimateID, 0 ) == 1 )
 			{
@@ -536,7 +530,7 @@ XP_Check( id, bShowGained = true )
 			iSkillID = SM_GetRandomSkill( id );
 			iSkillLevel = SM_GetSkillLevel( id, iSkillID, 2 );
 		}
-		
+
 		// OK at this point we have a valid skill, lets remove a level!
 		SM_SetSkillLevel( id, iSkillID, iSkillLevel - 1, 1 );
 
@@ -545,7 +539,7 @@ XP_Check( id, bShowGained = true )
 		// Get our current skills used
 		iSkillsUsed = SM_TotalSkillPointsUsed( id );
 	}
-	
+
 	// Need to reset all skill data for the given race if we've removed a skill
 	if ( bSkillRemoved )
 	{
@@ -565,7 +559,6 @@ XP_Check( id, bShowGained = true )
 
 XP_Configure()
 {
-
 	// Configure based on weapon multiplier
 
 	// Counter-Strike and Condition Zero weapons
@@ -606,7 +599,6 @@ XP_Configure()
 		fWpnXPMultiplier[CSW_SMOKEGRENADE	]	= 1.0;
 		fWpnXPMultiplier[CSW_FLASHBANG		]	= 1.0;
 	}
-
 	// Day of Defeat weapons
 	else if ( g_MOD == GAME_DOD )
 	{
@@ -661,7 +653,7 @@ XP_Configure()
 	fWpnXPMultiplier[CSW_IMMOLATE		]	= 1.0;
 	fWpnXPMultiplier[CSW_LOCUSTS		]	= 1.0;
 	fWpnXPMultiplier[CSW_SERPENTWARD	]	= 1.0;
-	fWpnXPMultiplier[CSW_SHADOW			]	= 1.0;	
+	fWpnXPMultiplier[CSW_SHADOW			]	= 1.0;
 	fWpnXPMultiplier[CSW_THORNS			]	= 1.0;
 	fWpnXPMultiplier[CSW_CARAPACE		]	= 1.0;
 	fWpnXPMultiplier[CSW_CARRION		]	= 1.0;
@@ -673,7 +665,6 @@ XP_Configure()
 // Reset the user's XP to 0
 public XP_Reset(id)
 {
-
 	p_data[id][P_LEVEL]		= 0;
 	p_data[id][P_XP]		= 0;
 	SM_ResetSkillLevels( id );
@@ -696,23 +687,28 @@ public XP_Reset(id)
 	SHARED_SetSpeed( id );
 
 	return PLUGIN_CONTINUE;
-}	
+}
 
 // Function from war3x thanks ryan!!!
 public XP_GetAdminFlag()
 {
+	new szFlags[24];
+	get_pcvar_string( CVAR_wc3_admin_flag, szFlags, 23 );
 
-    new szFlags[24];
-    get_pcvar_string( CVAR_wc3_admin_flag, szFlags, 23 );
-
-    return ( read_flags( szFlags ) );
+	return ( read_flags( szFlags ) );
 }
 
 stock XP_Give( id, iBonusXP )
 {
-
 	if ( !WC3_Check() || !id )
 	{
+		return 0;
+	}
+		
+	// Skip if user has no race yet
+	if ( p_data[id][P_RACE] == 0 )
+	{
+		client_print( id, print_center, "Your need to select a race to gain XP" );
 		return 0;
 	}
 
@@ -725,13 +721,13 @@ stock XP_Give( id, iBonusXP )
 	// Bonus calculated by:
 	// Bonus XP * (lvl of player/10 + 1.0)
 	// I.E. if Player is level 10, then it will be Bonus XP * 2.0
-	
+
 	if ( iBonusXP != 0 )
 	{
 		new Float:fCurrentLevel = float( p_data[id][P_LEVEL] );
 		new Float:iLevelMultiplier = ( fCurrentLevel / 10.0 ) + 1.0;
 		new iRealBonusXP = floatround(iLevelMultiplier * iBonusXP);
-		
+
 		p_data[id][P_XP] += iRealBonusXP;
 
 		XP_Check( id );

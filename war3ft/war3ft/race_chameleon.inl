@@ -12,7 +12,7 @@ public CHAM_Randomize()
 		for ( i = 0; i < 5; i++ )
 		{
 			iNewSkill = random_num( 0, MAX_SKILLS - 1 );
-			
+
 			// Trainable Skills
 			if ( i < 3 )
 			{
@@ -30,7 +30,7 @@ public CHAM_Randomize()
 			{
 				iType = SKILL_TYPE_PASSIVE;
 			}
-			
+
 			// Loop until we find the right type of skill and while the skill exists ( we don't want a duplicate skill!! )
 			while ( g_SkillType[iNewSkill] != iType || CHAM_SkillExists( iNewSkill ) )
 			{
@@ -50,7 +50,7 @@ public CHAM_Randomize()
 
 			if ( p_data[id][P_RACE] == RACE_CHAMELEON )
 			{
-				
+
 				// Reset everything
 				SM_ResetSkillLevels( id );
 				SM_ResetSkills( id );
@@ -60,12 +60,12 @@ public CHAM_Randomize()
 
 				// Set up the player's skill levels
 				CHAM_ConfigureSkills( id );
-				
+
 				// After skills set up - we need to configure the race!
 				WC3_SetRaceUp( id );
 			}
 		}
-	} 
+	}
 }
 
 CHAM_SkillExists( skill_id )
@@ -85,7 +85,6 @@ CHAM_SkillExists( skill_id )
 
 CHAM_Configure()
 {
-
 	// Configure the Chameleon Race
 	if ( !get_pcvar_num( CVAR_wc3_cham_random ) )
 	{
@@ -96,7 +95,7 @@ CHAM_Configure()
 		g_ChamSkills[4] = get_pcvar_num( CVAR_wc3_cham_passive );
 
 		// Lets do some error checking b/c I know some people will fuck this up...
-		
+
 		new i, bool:bError = false;
 		for ( i = 0; i < 3; i++ )
 		{
@@ -106,7 +105,7 @@ CHAM_Configure()
 				bError = true;
 			}
 		}
-		
+
 		// Check Ultimate
 		if ( !CHAM_ValidSkill( g_ChamSkills[3], SKILL_TYPE_ULTIMATE ) )
 		{
@@ -130,7 +129,7 @@ CHAM_Configure()
 
 // This will randomly assign skills to a player w/chameleon
 CHAM_ConfigureSkills( id )
-{	
+{
 	// Keep giving the a random skill until we have no more to give!
 	while ( SM_GiveRandomSkillPoint( id ) ) {}
 

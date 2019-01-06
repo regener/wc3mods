@@ -4,9 +4,8 @@
 
 #define TOTAL_MENUS 13
 
-
 // This is the list of menu titles that are in war3ft.txt
-new const MENU_NAMES[TOTAL_MENUS][] = 
+new const MENU_NAMES[TOTAL_MENUS][] =
 {
 	"MENU_BUY_ITEM",
 	"MENU_BUY_ITEM2",
@@ -24,7 +23,7 @@ new const MENU_NAMES[TOTAL_MENUS][] =
 };
 
 // Callback functions for the above menu names
-new const MENU_CALLBACK[TOTAL_MENUS][] = 
+new const MENU_CALLBACK[TOTAL_MENUS][] =
 {
 	"_MENU_Shopmenu1",
 	"_MENU_Shopmenu2",
@@ -51,13 +50,11 @@ public LANG_SetMenus()
 	new curMenuId = -1, highestMenuId = -1;
 	new iLang, iMenu;
 
-
 	// Loop through every menu
 
 	for ( iMenu = 0; iMenu < TOTAL_MENUS; iMenu++ )
 	{
 		// Register the menu names for each language
-
 		for ( iLang = 0; iLang < iTotalLanguages; iLang++ )
 		{
 			get_lang ( iLang, lang );
@@ -80,9 +77,8 @@ public LANG_SetMenus()
 //Function will return the race name based on the race id and the language of the user
 lang_GetRaceName ( race_id, id, race_name[], len, bool:shortLookup = false )
 {
-
 	new szRaceHelper[64];
-	
+
 	if ( shortLookup == true )
 	{
 		formatex( szRaceHelper, 63, "RACE_S_%d", race_id );
@@ -99,7 +95,6 @@ lang_GetRaceName ( race_id, id, race_name[], len, bool:shortLookup = false )
 //Description: Function will return the shopmenu item name based on the item id and the language of the user
 LANG_GetItemName ( item_id, id, item_name[], len, bool:shortLookup = false )
 {
-	
 	if ( item_id < 0 )
 	{
 		return;
@@ -149,8 +144,7 @@ LANG_GetItemInfo( item_id, id, item_description[], len )
 
 //Description: Function will return the skill name based on the race id, skill id and the language of the user
 LANG_GetSkillName( skill_id, id, skill_name[], len, func_id )
-{	
-
+{
 	// Handle any game-specific instructions first
 	if ( g_MOD == GAME_DOD )
 	{

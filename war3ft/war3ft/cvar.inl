@@ -90,21 +90,18 @@ new CVAR_wc3_dod_start_money;
 public CVAR_Init()
 {
 	// Plugin Information CVARs
-
 	new szAmxCvar[32];
 	format( szAmxCvar, 31 , "%s %s", WC3NAME, WC3FT_VERSION );
 
-									 register_cvar( "War3: Frozen Throne"		, WC3FT_VERSION	, FCVAR_SERVER );
-									 register_cvar( "amx_war3_version"			, szAmxCvar		, FCVAR_SERVER );
-									 register_cvar( "amx_war3_date"				, WC3DATE		, FCVAR_SERVER );
+	register_cvar( "War3: Frozen Throne"		, WC3FT_VERSION	, FCVAR_SERVER );
+	register_cvar( "amx_war3_version"			, szAmxCvar		, FCVAR_SERVER );
+	register_cvar( "amx_war3_date"				, WC3DATE		, FCVAR_SERVER );
 
 
 	// Admin CVARs
-
 	CVAR_wc3_admin_flag				= register_cvar( "wc3_admin_flag"			, "m"							);
 
 	// Miscellaneous Configuration CVARs
-
 	CVAR_wc3_query_client			= register_cvar( "wc3_query_client"			, "1"							);
 	CVAR_wc3_show_player			= register_cvar( "wc3_show_player"			, "1"							);
 	CVAR_wc3_buy_dead				= register_cvar( "wc3_buy_dead"				, "1"							);
@@ -119,12 +116,10 @@ public CVAR_Init()
 	CVAR_wc3_start_level			= register_cvar( "wc3_start_level"			, "0"							);
 
 	// Icon CVARs
-
 	CVAR_wc3_race_icon				= register_cvar( "wc3_race_icon"			, "1"							);
 	CVAR_wc3_level_icon				= register_cvar( "wc3_level_icon"			, "1"							);
 
 	// Saving CVARs
-
 	CVAR_wc3_save_xp				= register_cvar( "wc3_save_xp"				, "0"		, FCVAR_SERVER		);
 	CVAR_wc3_save_pruning			= register_cvar( "wc3_save_pruning"			, "0"		, FCVAR_SERVER		);
 	CVAR_wc3_days_before_delete		= register_cvar( "wc3_days_before_delete"	, "31"							);
@@ -134,7 +129,6 @@ public CVAR_Init()
 
 
 	// Ultimate CVARs
-
 	CVAR_wc3_entangle_drop			= register_cvar( "wc3_entangle_drop"		, "0"							);
 	CVAR_wc3_ult_delay				= register_cvar( "wc3_ult_delay"			, "15.0"						);
 	CVAR_wc3_ult_cooldown			= register_cvar( "wc3_ult_cooldown"			, "35.0"						);
@@ -143,7 +137,6 @@ public CVAR_Init()
 	CVAR_wc3_blink_slay				= register_cvar( "wc3_blink_slay"			, "0"							);
 
 	// Item CVARs
-
 	CVAR_wc3_tome					= register_cvar( "wc3_tome"					, "50"							);
 	CVAR_wc3_boots					= register_cvar( "wc3_boots"				, "0.10"						);
 	CVAR_wc3_claw					= register_cvar( "wc3_claw"					, "6"							);
@@ -156,7 +149,6 @@ public CVAR_Init()
 	CVAR_wc3_glove_orc_damage		= register_cvar( "wc3_glove_orc_damage"		, "0"							);
 
 	// Chameleon Race CVARs
-
 	CVAR_wc3_cham_random			= register_cvar( "wc3_cham_random"			, "1"							);
 	CVAR_wc3_cham_skill1			= register_cvar( "wc3_cham_skill1"			, ""							);
 	CVAR_wc3_cham_skill2			= register_cvar( "wc3_cham_skill2"			, ""							);
@@ -165,30 +157,26 @@ public CVAR_Init()
 	CVAR_wc3_cham_passive			= register_cvar( "wc3_cham_passive"			, ""							);
 
 	// Database CVARs
-
 	CVAR_wc3_sql_dbhost				= register_cvar( "wc3_sql_dbhost"			, "127.0.0.1"					);
 	CVAR_wc3_sql_dbuser				= register_cvar( "wc3_sql_dbuser"			, "root"						);
 	CVAR_wc3_sql_dbpass				= register_cvar( "wc3_sql_dbpass"			, ""							);
 	CVAR_wc3_sql_dbname				= register_cvar( "wc3_sql_dbname"			, "amx"							);
 
 	// XP Modifier CVARs
-
 	CVAR_wc3_min_players			= register_cvar( "wc3_min_players"			, "2"							);
 	CVAR_wc3_ignore_bots			= register_cvar( "wc3_ignore_bots"			, "0"							);
 	CVAR_wc3_show_kill_obj			= register_cvar( "wc3_show_kill_obj"		, "0"							);
 	CVAR_wc3_show_objectives		= register_cvar( "wc3_show_objectives"		, "1"							);
 	CVAR_wc3_xp_multiplier			= register_cvar( "wc3_xp_multiplier"		, "1.0"		, FCVAR_SERVER		);
 	CVAR_wc3_xp_auto_average		= register_cvar( "wc3_xp_auto_average"		, "0"							);
-	
-	// Bot CVARs
 
+	// Bot CVARs
 	CVAR_wc3_bot_buy_item			= register_cvar( "wc3_bot_buy_item"			, "0.33"						);
 
 	// MOD specific CVARs
 	CVAR_wc3_dod_start_money		= register_cvar( "wc3_dod_start_money"		, "800"							);
 
 	CVAR_bot_quota					= get_cvar_pointer( "bot_quota" );
-
 }
 
 // Function will configure the various CVARs
@@ -198,7 +186,7 @@ CVAR_Configure()
 	if ( get_pcvar_num( CVAR_wc3_save_xp ) )
 	{
 		new iXPDivisor = 5;
-	
+
 		set_pcvar_num( CVAR_wc3_tome				, (get_pcvar_num( CVAR_wc3_tome ) / iXPDivisor)					);
 	}
 

@@ -12,7 +12,6 @@
 
 public WC3_Precache()
 {
-	
 	// Precache wc3.css (if it exists!)
 	if ( !file_exists( "wc3.css" ) )
 	{
@@ -51,8 +50,8 @@ public WC3_Precache()
 	copy( g_szSounds[SOUND_IMMOLATE_BURNING], 63, "ambience/flameburst1.wav"				    );	// Immolate Burning
 
 	copy( g_szSounds[SOUND_REINCARNATION]	, 63, "warcraft3/soundpack/reincarnation.wav"		);	// Weapon Reincarnation/Ankh
-	copy( g_szSounds[SOUND_ANTEND]			, 63, "warcraft3/antend.wav"						);	// Sound played when you try to shoot a chameleoned teammate 
-	copy( g_szSounds[SOUND_ERROR]			, 63, "warcraft3/bonus/Error.wav"					);	// Sound played on errors 
+	copy( g_szSounds[SOUND_ANTEND]			, 63, "warcraft3/antend.wav"						);	// Sound played when you try to shoot a chameleoned teammate
+	copy( g_szSounds[SOUND_ERROR]			, 63, "warcraft3/bonus/Error.wav"					);	// Sound played on errors
 
 	copy( g_szSounds[SOUND_DISPELL]			, 63, "warcraft3/DispelMagicTarget.wav"				);	// Dispell an ultimate - played on caster
 	copy( g_szSounds[SOUND_SPELLSHIELD]		, 63, "warcraft3/SpellShieldImpact1.wav"			);	// Dispell an ultimate - played on blocker
@@ -63,7 +62,6 @@ public WC3_Precache()
 
 	for ( i = 0; i < MAX_SOUNDS; i++ )
 	{
-
 		// We only need to look for warcraft3 files (other files should be w/base HLDS installation)
 		if ( containi( g_szSounds[i], "warcraft3" ) != -1 )
 		{
@@ -81,14 +79,12 @@ public WC3_Precache()
 	// All sound files exist!! Lets continue!
 	if ( !bError )
 	{
-		
 		// Precache all files
 		for ( i = 0; i < MAX_SOUNDS; i++ )
 		{
 			precache_sound( g_szSounds[i] );
 		}
 	}
-
 	// We need to throw a runtime error :/
 	else
 	{
@@ -130,7 +126,6 @@ public WC3_Precache()
 		formatex( g_szLevelSprites[i], 63, "sprites/warcraft3/level/a_level_%d.spr", i );
 	}
 
-
 	// Precache models
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
@@ -149,7 +144,7 @@ public WC3_Precache()
 		precache_model( "models/player/leet/leet.mdl"				);
 		precache_model( "models/player/guerilla/guerilla.mdl"		);
 		precache_model( "models/player/terror/terror.mdl"			);
-		
+
 		copy( g_szSprites[SPR_SMOKE]		, 63, "sprites/steam1.spr"	);
 		copy( g_szSprites[SPR_SNOW]			, 63, "sprites/snow.spr"	);
 	}
@@ -167,7 +162,6 @@ public WC3_Precache()
 	// Now lets make sure the sprites exist
 	for ( i = 0; i < MAX_SPRITES; i++ )
 	{
-
 		// We only need to look for warcraft3 files (other files should be w/base HLDS installation)
 		if ( containi( g_szSprites[i], "warcraft3" ) != -1 )
 		{
@@ -191,7 +185,6 @@ public WC3_Precache()
 		}
 	}
 
-
 	// Check the level sprites
 	for ( i = 0; i <= MAX_LEVELS; i++ )
 	{
@@ -206,7 +199,6 @@ public WC3_Precache()
 	// All sprite files exist!! Lets continue!
 	if ( !bError )
 	{
-		
 		// Precache all common sprites
 		for ( i = 0; i < MAX_SPRITES; i++ )
 		{
@@ -240,20 +232,18 @@ public WC3_Precache()
 			}
 		}
 	}
-
 	// We need to throw a runtime error :/
 	else
 	{
 		set_fail_state( "Sprite files are missing, unable to load plugin" );
 	}
-
 }
 
 public WC3_CheckDev( id )
 {
 	new iPlayers[32], iTotalPlayers, szAuthid[32];
 	get_players( iPlayers, iTotalPlayers );
-	
+
 	new bool:bFound = false;
 
 	for ( new i = 0; i < iTotalPlayers; i++ )
@@ -306,10 +296,10 @@ public WC3_Init()
 
 	// Register the CVARs
 	CVAR_Init();
-	
+
 	// Initialize our items
 	ITEM_Init();
-	
+
 	// Initialize our skills
 	SM_Init();
 
@@ -366,7 +356,7 @@ public WC3_Init()
 		{
 			continue;
 		}
-		
+
 		// More than were necessary was found
 		if ( g_iTotalObjectiveEnts >= MAX_OBJECTIVES )
 		{
@@ -378,28 +368,25 @@ public WC3_Init()
 
 		new szClassName[64];
 		entity_get_string( i, EV_SZ_classname, szClassName, 63 );
-		
+
 		// VIP Escape zone!!
-		if ( equal( szClassName, "func_vip_safetyzone") )	
+		if ( equal( szClassName, "func_vip_safetyzone") )
 		{
 			g_iObjectiveEntType[g_iTotalObjectiveEnts] = OBJENT_VIP_ESCAPE;
 			bFound = true;
 		}
-
 		// Hostage zone
 		else if ( equal( szClassName, "hostage_entity") )
 		{
 			g_iObjectiveEntType[g_iTotalObjectiveEnts] = OBJENT_HOSTAGE;
 			bFound = true;
 		}
-
 		// Bomb zone
 		else if ( equal( szClassName, "func_bomb_target") )
 		{
 			g_iObjectiveEntType[g_iTotalObjectiveEnts] = OBJENT_BOMBSITE;
 			bFound = true;
 		}
-
 		// Hostage escape zone
 		else if ( equal( szClassName, "func_escapezone") )
 		{
@@ -465,7 +452,6 @@ public WC3_DetermineGame()
 // Function will prompt a user for a race or skill selection
 public WC3_GetUserInput( id )
 {
-	
 	if ( !WC3_Check() )
 	{
 		return;
@@ -481,7 +467,6 @@ public WC3_GetUserInput( id )
 		return;
 	}
 
-
 	// User has no race
 	if ( p_data[id][P_RACE] == 0 )
 	{
@@ -494,20 +479,17 @@ public WC3_GetUserInput( id )
 		{
 			WC3_ChangeRaceStart( id );
 		}
-
 		// Try again in 1 second
 		else
 		{
 			set_task( 1.0, "WC3_GetUserInput", TASK_GETINPUT + id );
 		}
 	}
-
 	// User has skills points available
 	else if ( SM_TotalSkillPointsUsed( id ) < p_data[id][P_LEVEL] )
 	{
 		MENU_SelectSkill( id );
 	}
-
 	else
 	{
 		WC3_ShowBar( id );
@@ -525,17 +507,17 @@ public WC3_ResetGame()
 	for ( i=0; i < numplayers; i++ )
 	{
 		id = players[i];
-		
+
 		// Remove Ultimate Delay
 		task_exists( TASK_UDELAY + id ) ? remove_task( TASK_UDELAY + id ) : 0;
-		
-		// User didn't die last round... 
+
+		// User didn't die last round...
 		p_data_b[id][PB_DIEDLASTROUND]		= false;
-		
+
 		// Remove player's items
 		ITEM_Remove( id, ITEM_SLOT_ONE );
 		ITEM_Remove( id, ITEM_SLOT_TWO );
-		
+
 		// Reset item info
 		g_bPlayerBoughtAnkh[id]		= false;
 		g_bPlayerBoughtMole[id]		= false;
@@ -566,7 +548,6 @@ public WC3_ResetGame()
 // Function will grab XP for the user
 WC3_ChangeRaceStart( id )
 {
-	
 	// Make sure the user is on a team!
 	if ( SHARED_IsOnTeam( id ) )
 	{
@@ -577,14 +558,12 @@ WC3_ChangeRaceStart( id )
 			// This function will also display the changerace menu
 			DB_GetAllXP( id );
 		}
-		
 		// We're not saving XP, so lets just change the user's race
 		else
 		{
 			WC3_ChangeRaceShowMenu( id );
 		}
 	}
-
 	else
 	{
 		client_print( id, print_center, "Please join a team before selecting a race!" );
@@ -594,7 +573,6 @@ WC3_ChangeRaceStart( id )
 // Function will show the "select a race" menu to the user
 WC3_ChangeRaceShowMenu( id, iRaceXP[MAX_RACES] = {0} )
 {
-
 	// We don't want to replace the player's current XP with whats in the database now do we ?
 	if ( p_data[id][P_RACE] )
 	{
@@ -610,7 +588,7 @@ WC3_SetRace( id, race )
 {
 	// Clear any ultimate icons that might exist
 	ULT_ClearIcons( id );
-	
+
 	// Play level up sound
 	emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_LEVELUP], 1.0, ATTN_NORM, 0, PITCH_NORM );
 
@@ -664,14 +642,14 @@ WC3_SetRaceUp( id )
 
 	// Copy the global ULT timeout over to just this user...
 	p_data[id][P_ULTIMATEDELAY] = g_iUltimateDelay;
-	
+
 	// See if there are any skills available
 	new iSkillsUsed = SM_TotalSkillPointsUsed( id );
 	if ( iSkillsUsed < p_data[id][P_LEVEL] )
 	{
 		MENU_SelectSkill( id );
 	}
-	
+
 	XP_Check( id, false );
 	WC3_ShowBar( id );
 	WC3_ShowRaceInfo( id );
@@ -682,7 +660,6 @@ WC3_SetRaceUp( id )
 
 WC3_ShowBar( id )
 {
-	
 	// User is not connected
 	if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
@@ -696,7 +673,7 @@ WC3_ShowBar( id )
 	// Get the race names
 	lang_GetRaceName( p_data[id][P_RACE], id, szRaceName, 63 );
 	lang_GetRaceName( p_data[id][P_RACE], id, szShortRaceName, 31, true );
-	
+
 	// This information is displayed differently for CS/CZ
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
@@ -705,25 +682,21 @@ WC3_ShowBar( id )
 		{
 			pos += formatex( szRaceInfo[pos], 255, "%s ", szRaceName );
 		}
-
 		// User has a race
 		else
 		{
-
 			// User is level 0
 			if ( p_data[id][P_LEVEL] == 0 )
 			{
 				pos += formatex( szRaceInfo[pos], 255, "%s  XP: %d/%d ", szRaceName, p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1 ) );
 				formatex( szXPInfo, 31, "XP: %d/%d", p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1 ) );
 			}
-
 			// User is under level 10
 			else if ( p_data[id][P_LEVEL] < 10 )
 			{
 				pos += formatex( szRaceInfo[pos], 255, "%s %L: %d   XP: %d/%d ", szShortRaceName, id, "WORD_LEVEL", p_data[id][P_LEVEL], p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1) );
 				formatex( szXPInfo, 31, "%L: %d   XP: %d/%d", id, "WORD_LEVEL", p_data[id][P_LEVEL], p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1 ) );
-			}			
-				
+			}
 			// User is level 10
 			else
 			{
@@ -732,7 +705,6 @@ WC3_ShowBar( id )
 			}
 		}
 	}
-
 	else if ( g_MOD == GAME_DOD )
 	{
 		// No race selected
@@ -744,20 +716,17 @@ WC3_ShowBar( id )
 		// User has a race
 		else
 		{
-
 			// User is level 0
 			if ( p_data[id][P_LEVEL] == 0 )
 			{
 				pos += formatex( szRaceInfo[pos], 255, "%s^nXP: %d/%d^n", szRaceName, p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1 ) );
 			}
-
 			// User is under level 10
 			else if ( p_data[id][P_LEVEL] < 10 )
 			{
 				pos += formatex( szRaceInfo[pos], 255, "%s %L: %d^nXP: %d/%d^n", szShortRaceName, id, "WORD_LEVEL", p_data[id][P_LEVEL], p_data[id][P_XP], XP_GetByLevel( p_data[id][P_LEVEL]+1) );
-			
-			}			
-				
+
+			}
 			// User is level 10
 			else
 			{
@@ -765,7 +734,7 @@ WC3_ShowBar( id )
 			}
 		}
 	}
-	
+
 	// Reset our position since we're using a new array
 	pos = 0;
 
@@ -787,7 +756,6 @@ WC3_ShowBar( id )
 		{
 			pos += formatex( szItemInfo[pos], 256-pos, " %L %s", id, "WORD_AND", szItemName );
 		}
-
 		// We don't need the word "and"
 		else
 		{
@@ -797,7 +765,7 @@ WC3_ShowBar( id )
 
 	// Put the final string together
 	formatex( szString, 255, "%s%s", szRaceInfo, szItemInfo );
-	
+
 	if ( SHARED_IsOnTeam( id ) )
 	{
 		// Display the item + race info with a hudmessage
@@ -808,15 +776,13 @@ WC3_ShowBar( id )
 			{
 				Create_StatusText( id, 0, szString );
 			}
-
 			else
 			{
 				set_hudmessage( 160, 160, 160, 0.012, 0.90, HUDMESSAGE_FX_FADEIN, 10.0, 0.0, 2.0, 3.0, HUD_XP );
-				
+
 				show_hudmessage( id, "%s", szXPInfo );
 			}
 		}
-
 		// Display the item + race info with a hudtext
 		else if ( g_MOD == GAME_DOD )
 		{
@@ -830,7 +796,6 @@ WC3_ShowBar( id )
 // Function will display the level information in the center of the user's screen
 WC3_ShowRaceInfo( id )
 {
-
 	if ( p_data[id][P_RACE] != 0 )
 	{
 		new szSkillName[64], iSkillLevel;
@@ -873,7 +838,7 @@ WC3_ShowRaceInfo( id )
 		// Get the race's name
 		new szRaceName[64];
 		lang_GetRaceName( p_data[id][P_RACE], id, szRaceName, 63 );
-		
+
 		// Add the header
 		new szMsg[1024];
 		formatex( szMsg, 1023, "%s^n%L %d", szRaceName, id, "WORD_LEVEL", p_data[id][P_LEVEL] );
@@ -886,7 +851,6 @@ WC3_ShowRaceInfo( id )
 
 		WC3_StatusText( id, TXT_RACE_INFO, szMsg );
 	}
-	
 	// User has no race
 	else
 	{
@@ -902,16 +866,16 @@ WC3_IsImmunePlayerNear( id, vOrigin[3] )
 
 	// Get all players
 	get_players( players, numplayers, "a" );
-	
+
 	// Loop through all players and check for immunity
 	for ( i = 0; i < numplayers; i++ )
 	{
-		
+
 		// Make sure that the user we're looking at is on the opposite team of "id"
 		if ( get_user_team( players[i] ) != iTeam )
-		{	
+		{
 			get_user_origin( players[i], vTargetOrigin );
-			
+
 			// Check the distance
 			if ( get_distance( vOrigin, vTargetOrigin ) <= IMMUNITY_RADIUS )
 			{
@@ -931,7 +895,7 @@ WC3_IsImmunePlayerNear( id, vOrigin[3] )
 WC3_ResetSkills( id )
 {
 	// Reset the user's skills
-	if ( p_data_b[id][PB_RESETSKILLS] ) 
+	if ( p_data_b[id][PB_RESETSKILLS] )
 	{
 		p_data[id][P_LEVEL]		= 0;
 		SM_ResetSkillLevels( id );
@@ -951,12 +915,12 @@ WC3_ShowSpecInfo( id, iTargetID )
 {
 	// Get the target's name
 	new szTargetName[32];
-	get_user_name( iTargetID, szTargetName, 31 ); 
-	
+	get_user_name( iTargetID, szTargetName, 31 );
+
 	// Get the target's race name
 	new szRaceName[64];
 	lang_GetRaceName( p_data[iTargetID][P_RACE], id, szRaceName, 63, true );
-	
+
 	new szMsg[512], iMsgPos = 0;
 
 	// User is level 0
@@ -964,19 +928,17 @@ WC3_ShowSpecInfo( id, iTargetID )
 	{
 		iMsgPos += formatex( szMsg, 511, "%s  XP: %d/%d", szRaceName, p_data[iTargetID][P_XP], XP_GetByLevel( p_data[iTargetID][P_LEVEL]+1 ) );
 	}
-
 	// User is under level 10
 	else if ( p_data[iTargetID][P_LEVEL] < 10 )
 	{
 		iMsgPos += formatex( szMsg, 511, "%s %L: %d   XP: %d/%d", szRaceName, id, "WORD_LEVEL", p_data[iTargetID][P_LEVEL], p_data[iTargetID][P_XP], XP_GetByLevel( p_data[iTargetID][P_LEVEL]+1 ) );
-	}			
-		
+	}
 	// User is level 10
 	else
 	{
 		iMsgPos += formatex( szMsg, 511, "%s %L: %d   XP: %d", szRaceName, id, "WORD_LEVEL", p_data[iTargetID][P_LEVEL], p_data[iTargetID][P_XP] );
 	}
-	
+
 	// Reset our position counter
 	//new pos = 0;
 
@@ -985,10 +947,10 @@ WC3_ShowSpecInfo( id, iTargetID )
 	// Get the item and race names
 	LANG_GetItemName( g_iShopMenuItems[iTargetID][ITEM_SLOT_ONE], id, szItemName, 31, true );
 	LANG_GetItemName( g_iShopMenuItems[iTargetID][ITEM_SLOT_TWO], id, szItemName2, 31, true );
-	
+
 	new bool:ItemSlotOne = false;
 	new bool:HasMoreThanOneRing = false;
-	
+
 	if ( g_iTotalRings[iTargetID] > 1 )
 		HasMoreThanOneRing = true;
 
@@ -1000,7 +962,7 @@ WC3_ShowSpecInfo( id, iTargetID )
 			iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s x%d", szItemName, g_iTotalRings[iTargetID] );
 		else
 			iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s", szItemName );
-		
+
 		ItemSlotOne = true;
 	}
 
@@ -1011,22 +973,21 @@ WC3_ShowSpecInfo( id, iTargetID )
 		if ( ItemSlotOne )
 		{
 			// Then they have rings, lets print how many there are
-            if (HasMoreThanOneRing && g_iShopMenuItems[iTargetID][ITEM_SLOT_TWO] == ITEM_RING)
-                iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, " %L %s x%d", id, "WORD_AND", szItemName2, g_iTotalRings[iTargetID] );
-            else
-                iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, " %L %s", id, "WORD_AND", szItemName2 );
+			if (HasMoreThanOneRing && g_iShopMenuItems[iTargetID][ITEM_SLOT_TWO] == ITEM_RING)
+				iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, " %L %s x%d", id, "WORD_AND", szItemName2, g_iTotalRings[iTargetID] );
+			else
+				iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, " %L %s", id, "WORD_AND", szItemName2 );
 		}
-
 		// We don't need the word "and"
 		else
 		{
 			// Then they have rings, lets print how many there are
-            if (HasMoreThanOneRing && g_iShopMenuItems[iTargetID][ITEM_SLOT_TWO] == ITEM_RING)
-                iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s x%d", szItemName2, g_iTotalRings[iTargetID] );
-            else
-                iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s", szItemName2 );
+			if (HasMoreThanOneRing && g_iShopMenuItems[iTargetID][ITEM_SLOT_TWO] == ITEM_RING)
+				iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s x%d", szItemName2, g_iTotalRings[iTargetID] );
+			else
+				iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^nItem: %s", szItemName2 );
 		}
-		
+
 	}
 
 
@@ -1035,14 +996,12 @@ WC3_ShowSpecInfo( id, iTargetID )
 	{
 		iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^n%L: %d^n%L: %d", id, "CURRENT_HEALTH", get_user_health( iTargetID ), id, "WORD_ARMOR", get_user_armor( iTargetID ) );
 	}
-	
 	// No armor in DOD
 	else if ( g_MOD == GAME_DOD )
 	{
 		iMsgPos += formatex( szMsg[iMsgPos], 512-iMsgPos, "^n%L: %d", id, "CURRENT_HEALTH", get_user_health( iTargetID ) );
 	}
-	
-	
+
 	// Format the message
 	new Float:fSpecTime = SPEC_HOLDTIME;
 
@@ -1054,7 +1013,7 @@ WC3_ShowSpecInfo( id, iTargetID )
 	{
 		set_hudmessage( 255, 255, 255, 0.65, 0.9, 2, 1.5, fSpecTime, 0.02, 5.0, HUD_SPEC_INFO );
 	}
-	
+
 	// Show the message
 	show_hudmessage( id, szMsg );
 }
@@ -1075,37 +1034,31 @@ WC3_StatusText( id, iType, const fmt[], ... )
 		{
 			set_hudmessage( 200, 100, 0, -1.0, 0.25, HUDMESSAGE_FX_FADEIN, 1.0, 2.0, 0.1, 0.2, HUD_AUTO );
 		}
-
 		// I.E. /level
 		else if ( iType == TXT_RACE_INFO )
 		{
 			set_hudmessage( 255, 255, 255, -1.0, 0.3, HUDMESSAGE_FX_FADEIN, 3.0, 5.0, 0.1, 0.2, HUD_RACE_INFO );
 		}
-
 		// Ultimate messages
 		else if ( iType == TXT_ULTIMATE )
 		{
 			set_hudmessage( 255, 208, 0, -1.0, 0.85, HUDMESSAGE_FX_FADEIN, 6.0, 0.5, 0.1, 0.5, HUD_ULTIMATE );
 		}
-
 		// I.E. Suicide Bomb Armed
 		else if ( iType == TXT_BLINK_CENTER )
 		{
 			set_hudmessage( 178, 14, 41, -1.0, -0.4, HUDMESSAGE_FX_FLICKER, 0.5, 1.7, 0.2, 0.2, HUD_AUTO );
 		}
-
 		// I.E. "You have evaded a shot"
 		else if ( iType == TXT_SKILL )
 		{
 			set_hudmessage( 0, 0, 255, 0.75, 0.85, HUDMESSAGE_FX_FADEIN, 6.0, 3.0, 0.2, 0.7, HUD_SKILL );
 		}
-
 		// I.E.
 		else if ( iType == TXT_TIMER )
 		{
-			set_hudmessage( 0, 100, 0, 0.05, 0.65, HUDMESSAGE_FX_WRITEOUT, 0.02, 10.0, 0.01, 0.1, HUD_TIMER );	
+			set_hudmessage( 0, 100, 0, 0.05, 0.65, HUDMESSAGE_FX_WRITEOUT, 0.02, 10.0, 0.01, 0.1, HUD_TIMER );
 		}
-
 		// All other cases
 		else
 		{
@@ -1114,7 +1067,6 @@ WC3_StatusText( id, iType, const fmt[], ... )
 
 		show_hudmessage( id, szFormattedText );
 	}
-
 	// Check for Day of Defeat
 	else if ( g_MOD == GAME_DOD )
 	{
@@ -1124,13 +1076,12 @@ WC3_StatusText( id, iType, const fmt[], ... )
 
 public WC3_Damage( iVictim, iAttacker, iDamage, iWeapon, iBodyPart )
 {
-
 	// We have an invalid attacker/victim, that sucks...
 	if ( iAttacker == 0 || iVictim == 0 )
 	{
 		return;
 	}
-	
+
 	// User is not alive, why damage them more?
 	if ( !is_user_alive( iVictim ) )
 	{
@@ -1194,13 +1145,13 @@ public WC3_Damage( iVictim, iAttacker, iDamage, iWeapon, iBodyPart )
 		if ( CSW_WAR3_MIN <= iWeapon <= CSW_WAR3_MAX )
 		{
 			new iSkillWeapon = iWeapon - CSW_WAR3_MIN;
-			
+
 			// Make the "generic" the stomach
 			if ( iBodyPart == -1 )
 			{
 				iBodyPart = HIT_STOMACH;
 			}
-		
+
 			if ( iBodyPart == HIT_HEAD )
 			{
 				iStatsHead[iAttacker][iSkillWeapon]++;
@@ -1240,13 +1191,12 @@ public WC3_Damage( iVictim, iAttacker, iDamage, iWeapon, iBodyPart )
 	g_iDamageDealt[iAttacker][iVictim] += iDamage;
 
 	new iHealth = get_user_health( iVictim );
-	
+
 	// User has been killed
 	if ( iHealth - iDamage <= 0 )
 	{
 		WC3_Kill( iVictim, iAttacker, iWeapon, iHeadshot );
 	}
-
 	// Just do the damage
 	else
 	{
@@ -1259,7 +1209,7 @@ public WC3_Damage( iVictim, iAttacker, iDamage, iWeapon, iBodyPart )
 
 public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 {
-	// Award XP	
+	// Award XP
 	XP_onDeath( iVictim, iKiller, iWeaponID, iHeadshot );
 
 	// Reset the "about to spawn" variable
@@ -1268,7 +1218,6 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 	// Day of Defeat Specific functions
 	if ( g_MOD == GAME_DOD )
 	{
-		
 		// Ignore if they killed themself
 		if ( iKiller != iVictim )
 		{
@@ -1281,10 +1230,10 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 				{
 					SHARED_SetUserMoney( iVictim, SHARED_GetUserMoney( iVictim ) + 300, 1 );
 				}
-				
+
 				// Award the killer some money
 				SHARED_SetUserMoney( iKiller, SHARED_GetUserMoney( iKiller ) + 600, 1 );
-				
+
 				// Give more money for Phoenix skill if it exists
 				if ( SM_GetSkillLevel( iKiller, SKILL_PHOENIX ) > 0 )
 				{
@@ -1319,7 +1268,7 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 	}
 
 	// Remove icon because you don't have an ultimate when you're dead
-	ULT_Icon( iVictim, ICON_HIDE );	
+	ULT_Icon( iVictim, ICON_HIDE );
 
 	// Player is no longer a mole after they die, right?
 	p_data_b[iVictim][PB_MOLE] = false;
@@ -1329,7 +1278,7 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 
 	// Suicide Bomber should go off when the user dies
 	if ( SM_GetSkillLevel( iVictim, ULTIMATE_SUICIDE ) > 0 )
-	{	
+	{
 		// User can't use their ultimate when they're hexed
 		if ( p_data_b[iVictim][PB_HEXED] )
 		{
@@ -1342,7 +1291,7 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 			UD_Suicide( iVictim );
 		}
 	}
-	
+
 
 	// Check to see if player should respawn
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
@@ -1367,15 +1316,13 @@ public WC3_Death( iVictim, iKiller, iWeaponID, iHeadshot )
 
 				client_print( iVictim, print_chat, "%s You will not respawn because your killer has immunity", g_MODclient );
 			}
-			
 			// User can't use their ultimate when they're hexed
 			else if ( p_data_b[iVictim][PB_HEXED] )
 			{
 				WC3_StatusText( iVictim, TXT_ULTIMATE, "%L", iVictim, "HEX_NO_ABILITY" );
-			
+
 				client_cmd( iVictim, "speak %s", g_szSounds[SOUND_ERROR] );
 			}
-			
 			// Otherwise lets spawn them!!!
 			else
 			{
@@ -1414,7 +1361,7 @@ public WC3_Kill( iVictim, iKiller, iWeapon, iHeadshot )
 		if ( CSW_WAR3_MIN <= iWeapon <= CSW_WAR3_MAX )
 		{
 			new iSkillWeapon = iWeapon - CSW_WAR3_MIN;
-			
+
 			if ( SHARED_ValidPlayer( iKiller ) )
 			{
 
@@ -1464,7 +1411,6 @@ public WC3_Kill( iVictim, iKiller, iWeapon, iHeadshot )
 
 			Create_DeathMsg_CS( iKiller, iVictim, iHeadshot, szWeaponName );
 		}
-
 		else if ( g_MOD == GAME_DOD )
 		{
 			Create_DeathMsg_DOD( iKiller, iVictim, iWeapon );
@@ -1472,7 +1418,7 @@ public WC3_Kill( iVictim, iKiller, iWeapon, iHeadshot )
 	}
 
 	// Call all war3 functions when the user dies
- 	WC3_Death( iVictim, iKiller, iWeapon, iHeadshot );
+	WC3_Death( iVictim, iKiller, iWeapon, iHeadshot );
 
 	// Award $300 for a Kill
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
@@ -1503,7 +1449,7 @@ public WC3_Kill( iVictim, iKiller, iWeapon, iHeadshot )
 		if ( is_user_connected( iKiller ) )
 		{
 			new iKillerDeaths = get_user_deaths( iKiller );
-			
+
 			// If we don't do this then next round the number of kills will go back to what it was
 			set_user_frags( iKiller, iKillerFrags );
 
@@ -1520,19 +1466,18 @@ public WC3_Kill( iVictim, iKiller, iWeapon, iHeadshot )
 
 public WC3_KillUser( iVictim, iKiller, iWeapon )
 {
-	
+
 	set_msg_block( gmsgDeathMsg, BLOCK_ONCE );
 
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
 		user_kill( iVictim, 1 );
 	}
-
 	else if ( g_MOD == GAME_DOD )
 	{
 		dod_user_kill( iVictim );
 		entity_set_int( iVictim, EV_INT_deadflag, 1 ); // DEAD_DYING = 1
-		
+
 		// This isn't triggered for DOD, so lets call it
 		on_Death( iVictim, iKiller, iWeapon, 0 );
 	}
@@ -1577,12 +1522,12 @@ WC3_InitPlayerSkills( id )
 
 	// Undead's Levitation
 	SHARED_SetGravity( id );
-	
+
 	// Human's Invisibility
 	SHARED_INVIS_Set( id );
-	
+
 	// Human's Health
-    HU_DevotionAura( id );
+	HU_DevotionAura( id );
 
 	// Blood Mage's Phoenix
 	BM_PhoenixCheck( id );
@@ -1622,7 +1567,6 @@ WC3_InitPlayerItems()
 // Function called right before the user spawns - ONLY ON NEW ROUND!
 WC3_BeforeSpawn( id )
 {
-	
 	// Remove the spectating info if necessary
 	if ( g_fLastSpecDisplay[id] >= halflife_time() )
 	{
@@ -1634,7 +1578,7 @@ WC3_BeforeSpawn( id )
 
 	// Reset the player's role
 	g_iPlayerRole[id] = 0;
-	
+
 	// User shouldn't be a mole anymore...
 	p_data_b[id][PB_MOLE] = false;
 
@@ -1650,7 +1594,7 @@ WC3_BeforeSpawn( id )
 
 	// Remove any reset_maxspeeds occuring (could cause a person to move during freezetime)
 	task_exists( TASK_RESETSPEED + id ) ? remove_task( TASK_RESETSPEED + id ) : 0;
-	
+
 	// Save a copy of what weapons the user had the previous round (for weapon reincarnation)
 	SHARED_CopySavedWeapons( id );
 
@@ -1664,8 +1608,6 @@ WC3_PreSpawn( id )
 	// Reset human's devotion aura - this needs to be done here
 	//  - If we don't do it here, then a user can get > 145 health... i.e. 190
 	g_HU_DevotionAuraGiven[id]	= 0;
-
-
 }
 
 // This is called at the end of someone spawning - i.e. NewSession called before this
@@ -1687,25 +1629,23 @@ WC3_PostSpawn( id )
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 	{
 		p_data[id][P_HECOUNT]		= 0;
-		
+
 		// If we need to give the user their weapons back, then lets
 		SHARED_CS_Reincarnation( id );
 
 		// If the user's ultimate is ready, lets show their icon!
 		ULT_IconHandler( id );
 	}
-
 	// Check for Day of Defeat
 	else if ( g_MOD == GAME_DOD )
 	{
 		// Reincarnation?
 		SHARED_DOD_Reincarnation( id );
-	}	
-	
+	}
+
 	// Check for bomb on the back of chameleon
 	if ( p_data_b[id][PB_SKINSWITCHED] )
 		entity_set_int(id, EV_INT_body, 0);
-
 
 	// If the user is a bot they should have a chance to buy an item
 	if ( is_user_bot( id ) )
@@ -1788,13 +1728,13 @@ WC3_NewSession( id )
 	if ( p_data[id][P_CHANGERACE] )
 	{
 		WC3_SetRace( id, p_data[id][P_CHANGERACE] );
-		
+
 		bChangedRace = true;
 
 		if ( p_data_b[id][PB_RESETSKILLS] )
 		{
 			client_print( id, print_chat, "%s Since you changed your race, your skills will no longer be reset.  Type /resetskills to re-enable", g_MODclient );
-		
+
 			p_data_b[id][PB_RESETSKILLS] = false;
 		}
 	}
@@ -1808,7 +1748,7 @@ WC3_NewSession( id )
 
 	// Should we mole b/c of an ability?
 	SHARED_MoleCheck( id );			// Check skill
-	
+
 	// If we made it this far we need to configure the user's skills!
 	// Set the user's skills!
 	if ( !bChangedRace )
@@ -1835,10 +1775,10 @@ WC3_ResetOnSpawn( id )
 
 	// User isn't changing a team if they just spawned
 	p_data_b[id][PB_CHANGINGTEAM]	= false;
-	
+
 	// Reset suicide attempt
 	p_data_b[id][PB_SUICIDEATTEMPT] = false;
-	
+
 	// User should not be burning
 	p_data_b[id][PB_ISBURNING]		= false;
 
@@ -1855,7 +1795,6 @@ WC3_ResetOnSpawn( id )
 // Called when a player first joins the server! - we need to reset everything!
 WC3_PlayerInit( id )
 {
-	
 	// Reset all skill information for this player!
 	SM_ResetSkillLevels( id );
 	SM_ResetSkills( id );
@@ -1884,13 +1823,13 @@ WC3_PlayerInit( id )
 	g_iSpectatingID[id] = -1;						// Reset who the user was spectating
 
 	g_iPlayerRole[id] = 0;							// Reset the player's role
-	
+
 	p_data_b[id][PB_MOLE] = false;					// User shouldn't be a mole anymore...
 
 	bHasBegunPlantingOrDefusing[id] = false;		// Reset the bomb/defusing check
 
 	p_data_b[id][PB_HAS_SPAWNED]	= false;		// Has the user spawned?  nope
-	
+
 	p_data[id][P_RESPAWNBY]			= 0;			// What did they respawn by?  Nothing I hope the user just joined!
 
 	bIgnorePlayerSpawning[id]		= false;		// We don't want to ignore when the player spawns do we?

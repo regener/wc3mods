@@ -15,7 +15,7 @@ public ADMIN_ServerHandler()
 	read_argv( 0, szCmd, 31 );
 	read_argv( 1, szArg1, 31 );
 	read_argv( 2, szArg2, 31 );
-	
+
 	new id	= str_to_num( szArg1 );
 	new iXP = str_to_num( szArg2 );
 
@@ -25,7 +25,6 @@ public ADMIN_ServerHandler()
 
 		iXP += p_data[id][P_XP];
 	}
-
 	else if ( equal( szCmd, "changexp" ) )
 	{
 		iXP += p_data[id][P_XP];
@@ -49,9 +48,9 @@ public ADMIN_Handler( id )
 
 		return PLUGIN_HANDLED;
 	}
-	
+
 	// Make sure the user is an admin
-    if ( !( get_user_flags( id ) & XP_GetAdminFlag() ) )
+	if ( !( get_user_flags( id ) & XP_GetAdminFlag() ) )
 	{
 		client_print( id, print_console, "%L", id, "YOU_HAVE_NO_ACCESS", g_MODclient );
 
@@ -59,8 +58,6 @@ public ADMIN_Handler( id )
 	}
 
 	// OK we're free to go!!!
-
-
 	new szArg1[32], szArg2[32];
 	read_argv( 1, szArg1, 31 );
 	read_argv( 2, szArg2, 31 );
@@ -77,7 +74,6 @@ public ADMIN_Handler( id )
 
 		ADMIN_GiveXP( id, szArg1, str_to_num( szArg2 ) );
 	}
-
 	// Set the level of a user's race
 	else if ( equal( szCmd, "wc3_setlevel" ) )
 	{
@@ -87,7 +83,7 @@ public ADMIN_Handler( id )
 
 			return PLUGIN_HANDLED;
 		}
-		
+
 		new iLevel = str_to_num( szArg2 );
 
 		if ( iLevel < 0 || iLevel >= 11 )
@@ -99,7 +95,6 @@ public ADMIN_Handler( id )
 
 		ADMIN_SetLevel( id, szArg1, iLevel );
 	}
-
 	// Give the user an item
 	else if ( equal( szCmd, "wc3_giveitem" ) )
 	{
@@ -124,7 +119,6 @@ public ADMIN_Handler( id )
 
 		ADMIN_GiveItem( id, szArg1, iItemID );
 	}
-
 	// Enable the plugin
 	else if ( equal( szCmd, "wc3_enable" ) )
 	{
@@ -143,7 +137,6 @@ public ADMIN_Handler( id )
 		}
 
 	}
-
 	// Disable the plugin
 	else if ( equal( szCmd, "wc3_disable" ) )
 	{
@@ -169,7 +162,7 @@ public ADMIN_Handler( id )
 			ADMIN_Print( id, "%s Plugin disabled!", g_MODclient );
 		}
 	}
-	
+
 	new szArgs[128];
 	read_args( szArgs, 127 );
 
@@ -196,7 +189,6 @@ ADMIN_SetXP( id, iXP )
 // Set the user's level
 ADMIN_SetLevel( id, szTarget[], iLevel )
 {
-
 	new iXP = XP_GetByLevel( iLevel );
 
 	new iTarget = 0, bool:bTargetFound = false;
@@ -210,7 +202,7 @@ ADMIN_SetLevel( id, szTarget[], iLevel )
 
 		bTargetFound = true;
 	}
-	
+
 	// No target found :/
 	if ( !bTargetFound )
 	{
@@ -222,7 +214,7 @@ ADMIN_SetLevel( id, szTarget[], iLevel )
 ADMIN_GiveXP( id, szTarget[], iXP )
 {
 	new iTarget = 0, bool:bTargetFound = false;
-	
+
 	// Do this while we continue having a target!
 	while ( ( iTarget = FindTarget( iTarget, szTarget ) ) > 0 )
 	{
@@ -252,7 +244,7 @@ ADMIN_GiveItem( id, szTarget[], iItemID )
 	while ( ( iTarget = FindTarget( iTarget, szTarget ) ) > 0 )
 	{
 		client_print( iTarget, print_chat, "%s The admin has given you the item '%s'", g_MODclient, szItemName );
-		
+
 		ITEM_GiveItem( iTarget, iItemID );
 
 		bTargetFound = true;
@@ -268,7 +260,6 @@ ADMIN_GiveItem( id, szTarget[], iItemID )
 // Find a user based on szTarget
 FindTarget( iLastID, szTarget[] )
 {
-	
 	new iTarget = -1;
 
 	// Then we want to basically return everyone!
@@ -276,7 +267,7 @@ FindTarget( iLastID, szTarget[] )
 	{
 		new players[32], iTotalPlayers, i;
 		get_players( players, iTotalPlayers );
-		
+
 		// Loop through and search for the next target
 		for ( i = 0; i < iTotalPlayers; i++ )
 		{
@@ -293,12 +284,11 @@ FindTarget( iLastID, szTarget[] )
 			iTarget = players[0];
 		}
 	}
-
 	// Find a target based on the team
 	else if ( szTarget[0] == '@' )
 	{
 		new iTeam = -1;
-		
+
 		// Counter-Strike and Condition Zero Checks
 		if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
 		{
@@ -311,7 +301,6 @@ FindTarget( iLastID, szTarget[] )
 				iTeam = TEAM_CT;
 			}
 		}
-		
 		// Day of Defeat check
 		else if ( g_MOD == GAME_DOD )
 		{
@@ -333,11 +322,11 @@ FindTarget( iLastID, szTarget[] )
 
 			// Loop through and search for the next target
 			for ( i = 0; i < iTotalPlayers; i++ )
-			{			
+			{
 				// Make sure they're on the same team
 				if ( iTeam == get_user_team( players[i] ) )
 				{
-					
+
 					// This is the next available player
 					if ( bSaveNext )
 					{
@@ -350,7 +339,7 @@ FindTarget( iLastID, szTarget[] )
 					{
 						bSaveNext = true;
 					}
-					
+
 					// Save the FIRST player on this team
 					if ( iFirstPlayer == -1 )
 					{
@@ -366,13 +355,12 @@ FindTarget( iLastID, szTarget[] )
 			}
 		}
 	}
-
 	// Otherwise search for a player
 	else
 	{
 		// Initial search is by player name
 		new iPlayer = find_player( "a", szTarget );
-		
+
 		// If not found, search by partial match
 		if ( !iPlayer )
 		{
@@ -404,7 +392,7 @@ FindTarget( iLastID, szTarget[] )
 				iPlayer = find_player( "k", str_to_num( szTarget[1] ) )
 			}
 		}
-		
+
 		// Yay we have a match!!!
 		if ( iPlayer && iLastID != iPlayer )
 		{
@@ -442,7 +430,7 @@ ADMIN_NoTargetFound( id, szTarget[], bool:bMulti )
 
 // Function will print to server console or client console based on the ID number
 ADMIN_Print( id, text[], {Float,_}:...)
-{    
+{
 	// format the text as needed
 
 	new szFormattedText[128];
@@ -462,12 +450,11 @@ ADMIN_Print( id, text[], {Float,_}:...)
 	{
 		return;
 	}
-}  
+}
 
 // Adapted from war3x's log file (I was lazy)
 ADMIN_Log( id, szCommand[], {Float,_}:... )
 {
-
 	new szLogFile[128];
 	get_configsdir( szLogFile, 127 );
 	formatex( szLogFile, 127, "%s/war3ft/wc3_admin.log", szLogFile );

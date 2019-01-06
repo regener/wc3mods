@@ -4,12 +4,11 @@
 
 public EVENT_DOD_EndRound()
 {
-	
 	if ( !WC3_Check() )
 	{
 		return;
 	}
-	
+
 	// The round has ended
 	g_EndRound = true;
 
@@ -22,7 +21,6 @@ public EVENT_DOD_EndRound()
 	{
 		iTeam = ALLIES;
 	}
-
 	// Axis won!
 	else if ( iWinner == 4 )
 	{
@@ -37,7 +35,6 @@ public EVENT_DOD_EndRound()
 // Called when a user scores!
 public client_score( index, score, total )
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
@@ -63,24 +60,22 @@ public client_score( index, score, total )
 
 public _DOD_showMoney(parm[3])
 {
-
 	if ( !WC3_Check() )
 	{
 		return;
 	}
-	
+
 	new id = parm[0];
 
 	if ( !p_data_b[id][PB_ISCONNECTED] )
 	{
 		return;
 	}
-	
+
 	new Float:fTime = 0.7;
 
 	if ( SHARED_IsOnTeam( id ) )
 	{
-
 		new szMsg[128];
 
 		// Set up the hud message
@@ -94,7 +89,6 @@ public _DOD_showMoney(parm[3])
 			{
 				formatex( szMsg, 127, "$%d^n%d", p_data[id][P_MONEY], parm[2] );
 			}
-
 			// Gained Money
 			else
 			{
@@ -102,14 +96,13 @@ public _DOD_showMoney(parm[3])
 			}
 
 			show_hudmessage( id, szMsg );
-			
+
 			// Remove task if it exists
 			( task_exists( TASK_MONEYLOOP + id ) ) ? remove_task( TASK_MONEYLOOP + id ) : 0;
-			
+
 			// Don't show the message for 2 seconds so the user notices the change in money
 			fTime = 2.0
 		}
-
 		// Just show the money like usual
 		else
 		{

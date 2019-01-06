@@ -4,13 +4,12 @@
 
 public DB_DetermineType()
 {
-
 	new iDatabaseType = get_pcvar_num( CVAR_wc3_save_xp_db );
 
 	// See if we can save with MySQL
 	if ( iDatabaseType == DB_MYSQLX )
 	{
-	
+
 		// Then we can't save using mysql
 		if ( !LibraryExists( "sqlx", LibType_Class ) )
 		{
@@ -33,13 +32,13 @@ public DB_DetermineType()
 	// See if we can save with SQLite if MySQLX didn't work
 	if ( g_DBType == -1 )
 	{
-		
+
 		// Then we can't save w/this!!!
 		if ( !LibraryExists( "sqlx", LibType_Class )  )
 		{
 			WC3_Log( true, "[WARNING] Unable to saving using SQLite, please enable the sqlite module" );
 		}
-		
+
 		// OK we can save
 		else
 		{
@@ -50,7 +49,7 @@ public DB_DetermineType()
 			SQL_SetAffinity( "sqlite" );
 		}
 	}
-	
+
 	// Then we don't have a DB Type yet set up for saving! Disable saving
 	if ( g_DBType == -1 )
 	{
@@ -65,18 +64,17 @@ public DB_DetermineType()
 // Function will determine what type of database we should use, then initiate the appropriate "connections"
 public DB_Init()
 {
-	
 	// Then we don't want to save XP
 	if ( !get_pcvar_num( CVAR_wc3_save_xp ) )
 	{
 		return;
 	}
-	
+
 	// We should only need to call this once
 	if ( g_DBType == -1 )
 	{
 		DB_DetermineType();
-	}	
+	}
 
 	// Initiate our database
 	switch( g_DBType )
@@ -91,7 +89,6 @@ public DB_Init()
 // Close the database connection(s)
 public DB_Close()
 {
-	
 	// Close our connections
 	switch( g_DBType )
 	{
@@ -139,7 +136,7 @@ public DB_SaveXP( id, bThreaded )
 	{
 		return;
 	}
-	
+
 	// Save the XP - use threaded!
 	if ( bThreaded )
 	{
@@ -149,7 +146,6 @@ public DB_SaveXP( id, bThreaded )
 			case DB_SQLITE:	SQLITE_Save_T( id );
 		}
 	}
-
 	// Don't save with threaded!
 	else
 	{
@@ -159,16 +155,11 @@ public DB_SaveXP( id, bThreaded )
 			case DB_SQLITE:	SQLITE_Save( id );
 		}
 	}
-
-
-
-	return;
 }
 
 // This function will save the XP for all players
 public DB_SaveAll( bThreaded )
 {
-
 	if ( !get_pcvar_num( CVAR_wc3_save_xp ) )
 	{
 		return;
@@ -188,7 +179,6 @@ public DB_SaveAll( bThreaded )
 // Function will return the appropriate key for a user
 DB_GetKey( id, szKey[], len )
 {
-
 	switch( get_pcvar_num( CVAR_wc3_save_by ) )
 	{
 		case DB_SAVEBY_NAME:
@@ -222,8 +212,8 @@ public DB_GetAllXP( id )
 	{
 		return;
 	}
-	
-	// Get the XP	
+
+	// Get the XP
 	switch( g_DBType )
 	{
 		case DB_MYSQLX:	MYSQLX_GetAllXP( id );
@@ -235,7 +225,6 @@ public DB_GetAllXP( id )
 
 public DB_SetDataForRace( id )
 {
-
 	// If we're not saving XP, why do this?
 	if ( !get_pcvar_num( CVAR_wc3_save_xp ) || !id )
 	{
@@ -260,12 +249,11 @@ public DB_FormatString( text[], len )
 		case DB_MYSQLX:	replace_all( text, len, "'", "\'" );
 		case DB_SQLITE:	replace_all( text, len, "'", "''" );
 	}
-	
+
 }
 
 DB_UpdateTimestamp( id )
 {
-
 	// If we're not saving XP, why do this?
 	if ( !get_pcvar_num( CVAR_wc3_save_xp ) || !id )
 	{
@@ -284,7 +272,6 @@ DB_UpdateTimestamp( id )
 
 DB_Prune()
 {
-	
 	// If we're not saving or pruning is disabled, we don't want to be here
 	if ( !get_pcvar_num( CVAR_wc3_save_pruning ) || !get_pcvar_num( CVAR_wc3_save_xp ) || !get_pcvar_num( CVAR_wc3_days_before_delete ) )
 	{
@@ -315,7 +302,7 @@ public DB_FetchUniqueID( id )
 		case DB_MYSQLX:	MYSQLX_FetchUniqueID( id );
 		case DB_SQLITE:	SQLITE_FetchUniqueID( id );
 	}
-	
+
 	// Nothing was found - try again in a bit
 	if ( g_iDBPlayerUniqueID[id] == 0 )
 	{

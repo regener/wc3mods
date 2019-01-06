@@ -24,7 +24,6 @@ public MENU_War3Menu( id )
 
 public _MENU_War3Menu( id, key )
 {
-
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
@@ -38,13 +37,12 @@ public _MENU_War3Menu( id, key )
 		case 3:	MOTD_War3help( id );
 		case 4:	menu_Admin_Options( id );
 	}
-	
+
 	return PLUGIN_HANDLED;
 }
 
 public menu_Skill_Options( id )
 {
-
 	new pos = 0, i, menu_body[512], menuitems[3][32]
 	new keys = (1<<0)|(1<<1)|(1<<2)|(1<<8)|(1<<9)
 
@@ -64,8 +62,8 @@ public menu_Skill_Options( id )
 	return PLUGIN_CONTINUE
 }
 
-public _menu_Skill_Options(id,key){
-	
+public _menu_Skill_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
@@ -82,8 +80,8 @@ public _menu_Skill_Options(id,key){
 	return PLUGIN_HANDLED;
 }
 
-public menu_Race_Options(id){
-
+public menu_Race_Options(id)
+{
 	new pos = 0, i, menu_body[512], menuitems[4][32]
 	new keys = (1<<0)|(1<<1)|(1<<2)|(1<<3)|(1<<8)|(1<<9)
 
@@ -103,8 +101,8 @@ public menu_Race_Options(id){
 	return PLUGIN_CONTINUE
 }
 
-public _menu_Race_Options(id,key){
-
+public _menu_Race_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
@@ -122,8 +120,8 @@ public _menu_Race_Options(id,key){
 	return PLUGIN_HANDLED;
 }
 
-public menu_Item_Options(id){
-
+public menu_Item_Options(id)
+{
 	new pos = 0, i, menu_body[512], menuitems[4][32]
 	new keys = (1<<0)|(1<<1)|(1<<2)|(1<<3)|(1<<8)|(1<<9)
 
@@ -143,8 +141,8 @@ public menu_Item_Options(id){
 	return PLUGIN_CONTINUE
 }
 
-public _menu_Item_Options(id,key){
-
+public _menu_Item_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
@@ -162,12 +160,12 @@ public _menu_Item_Options(id,key){
 	return PLUGIN_HANDLED;
 }
 
-public menu_Admin_Options(id){
-
-    if ( id && !( get_user_flags( id ) & XP_GetAdminFlag() ) )
+public menu_Admin_Options(id)
+{
+	if ( id && !( get_user_flags( id ) & XP_GetAdminFlag() ) )
 	{
-			client_print(id,print_center,"%s %L",g_MODclient, id,"YOU_HAVE_NO_ACCESS")
-			return PLUGIN_HANDLED
+		client_print(id,print_center,"%s %L",g_MODclient, id,"YOU_HAVE_NO_ACCESS")
+		return PLUGIN_HANDLED
 	}
 
 	new pos = 0, i, menu_body[512], menuitems[3][32]
@@ -188,20 +186,23 @@ public menu_Admin_Options(id){
 	return PLUGIN_CONTINUE
 }
 
-public _menu_Admin_Options(id,key){
-
+public _menu_Admin_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
 	}
 
-	switch (key){
-		case 0:{
+	switch (key)
+	{
+		case 0:
+		{
 			g_menuOption[id] = 1
 			g_menuSettings[id] = 50
 			menu_PlayerXP_Options(id,g_menuPosition[id] = 0)
 		}
-		case 1:{
+		case 1:
+		{
 			g_menuOption[id] = 1
 			g_menuSettings[id] = 50
 			menu_TeamXP_Options(id)
@@ -213,9 +214,10 @@ public _menu_Admin_Options(id,key){
 	return PLUGIN_HANDLED;
 }
 
-public menu_PlayerXP_Options(id,pos){
-
-	if (pos < 0){
+public menu_PlayerXP_Options(id,pos)
+{
+	if (pos < 0)
+	{
 		menu_Admin_Options(id)
 		return PLUGIN_CONTINUE
 	}
@@ -236,7 +238,8 @@ public menu_PlayerXP_Options(id,pos){
 	if (end > g_menuPlayersNum[id])
 		end = g_menuPlayersNum[id]
 
-	for(new a = start; a < end; ++a){
+	for(new a = start; a < end; ++a)
+	{
 		i = g_menuPlayers[id][a]
 		get_user_name(i,name,31)
 		get_user_team(i,team,3)
@@ -249,35 +252,39 @@ public menu_PlayerXP_Options(id,pos){
 
 	format(back,15,"%L",id,"BACK_STRING")
 
-	if (end != g_menuPlayersNum[id]){
+	if (end != g_menuPlayersNum[id])
+	{
 		format(menuBody[len],511-len,"^n9. %L...^n0. %s", id,"MORE_STRING", pos ? back : back)
 		keys |= (1<<8)
 	}
-	else{
+	else
+	{
 		format(exitstring,15,"%L",id,"WORD_EXIT")
 		format(menuBody[len],511-len,"^n0. %s", pos ? back : exitstring)
 	}
 
-
 	show_menu(id,keys,menuBody,-1)
 	return PLUGIN_CONTINUE
-
 }
 
-public _menu_PlayerXP_Options(id,key){
-
+public _menu_PlayerXP_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
 	}
 
-	switch(key){
-		case 7:{
+	switch(key)
+	{
+		case 7:
+		{
 			++g_menuOption[id]
-			if (g_menuOption[id]>6){
+			if (g_menuOption[id]>6)
+			{
 				g_menuOption[id]=1
 			}
-			switch(g_menuOption[id]){
+			switch(g_menuOption[id])
+			{
 				case 1: g_menuSettings[id] = 50
 				case 2: g_menuSettings[id] = 100
 				case 3: g_menuSettings[id] = 500
@@ -289,7 +296,8 @@ public _menu_PlayerXP_Options(id,key){
 		}
 		case 8: menu_PlayerXP_Options(id,++g_menuPosition[id])
 		case 9: return PLUGIN_HANDLED;
-		default:{
+		default:
+		{
 			new player = g_menuPlayers[id][g_menuPosition[id] * 7 + key]
 			client_print(player,print_chat,"%s %L",g_MODclient, id,"THE_ADMIN_JUST_GAVE_YOU_XP",g_menuSettings[id])
 			p_data[player][P_XP] += g_menuSettings[id]
@@ -303,8 +311,8 @@ public _menu_PlayerXP_Options(id,key){
 	return PLUGIN_HANDLED;
 }
 
-public menu_TeamXP_Options(id){
-
+public menu_TeamXP_Options(id)
+{
 	new pos = 0, i, menu_body[512], menuitems[3][32], give[16]
 	new keys = (1<<0)|(1<<1)|(1<<2)|(1<<7)|(1<<8)|(1<<9)
 
@@ -313,7 +321,8 @@ public menu_TeamXP_Options(id){
 	format(menuitems[2],31,"%L",id,"EVERYONE")
 
 	pos += format(menu_body[pos], 511-pos, "%L^n^n",id,"MENU_TEAM_XP")
-	for (i = 0; i<3; i++){
+	for (i = 0; i<3; i++)
+	{
 		pos += format(menu_body[pos], 511-pos, "\w%d. %s^n",i+1,menuitems[i])
 	}
 	format(give,15,"%L",id,"GIVE")
@@ -325,33 +334,39 @@ public menu_TeamXP_Options(id){
 	return PLUGIN_CONTINUE
 }
 
-public _menu_TeamXP_Options(id,key){
-
+public _menu_TeamXP_Options(id,key)
+{
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
 	}
 
-	switch(key){
+	switch(key)
+	{
 		case 0:
 		{
 			ADMIN_GiveXP( id, "@T", g_menuSettings[id] );
 			menu_TeamXP_Options(id)
 		}
-		case 1:{
+		case 1:
+		{
 			ADMIN_GiveXP( id, "@CT", g_menuSettings[id] );
 			menu_TeamXP_Options(id)
 		}
-		case 2:{
+		case 2:
+		{
 			ADMIN_GiveXP( id, "@ALL", g_menuSettings[id] );
 			menu_TeamXP_Options(id)
 		}
-		case 7:{
+		case 7:
+		{
 			++g_menuOption[id]
-			if (g_menuOption[id]>6){
+			if (g_menuOption[id]>6)
+			{
 				g_menuOption[id]=1
 			}
-			switch(g_menuOption[id]){
+			switch(g_menuOption[id])
+			{
 				case 1: g_menuSettings[id] = 50
 				case 2: g_menuSettings[id] = 100
 				case 3: g_menuSettings[id] = 500
@@ -369,10 +384,9 @@ public _menu_TeamXP_Options(id,key){
 
 public MENU_ResetXP(id)
 {
-
 	static szMenu[128];
 	new keys = (1<<0)|(1<<1)|(1<<9);
-	
+
 	formatex( szMenu, 127, "%L^n^n\w1. Yes^n\w2. No", id, "MENU_RESET_XP" );
 
 	show_menu( id, keys, szMenu, -1 );
@@ -382,7 +396,6 @@ public MENU_ResetXP(id)
 
 public _MENU_ResetXP( id, key )
 {
-	
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
@@ -393,14 +406,13 @@ public _MENU_ResetXP( id, key )
 	{
 		XP_Reset( id );
 	}
-	
+
 	return PLUGIN_HANDLED;
 }
 
 // Function will display the changerace menu
 public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 {
-	
 	new szRaceName[MAX_RACES+1][64], i, pos, iKeys = 0, szMenu[512], szXP[16];
 
 	// Get our race names
@@ -425,13 +437,13 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 	for ( i = 0; i < get_pcvar_num( CVAR_wc3_races ); i++ )
 	{
 		num_to_str( iRaceXP[i], szXP, 15 );
-		
+
 		// Add the "Select a Hero" message if necessary
 		if ( i == 4 )
 		{
 			pos += format( szMenu[pos], 512-pos, "%L", id, "SELECT_HERO" );
 		}
-		
+
 		// User's current race
 		if ( i == p_data[id][P_RACE] - 1 )
 		{
@@ -439,7 +451,6 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 
 			iKeys |= (1<<i);
 		}
-
 		// Race the user wants to change to
 		else if ( i == p_data[id][P_CHANGERACE] - 1 )
 		{
@@ -447,7 +458,6 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 
 			iKeys |= (1<<i);
 		}
-
 		// All other cases
 		else
 		{
@@ -472,7 +482,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 						iTotal[p_data[iTarget][P_RACE]]++;
 					}
 				}
-				
+
 				// Now if we have more races selected than iRaceLimit provides us with, then we need to increase iRaceLimit
 				while ( HLPR_TotalUsingRaces( iTotal ) > iRaceLimit * get_playersnum() )
 				{
@@ -512,7 +522,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 	}
 
 	iKeys |= (1<<i);
-	
+
 	// This is needed so we can make the Auto-Select option "0" if the number of races is 9
 	if ( get_pcvar_num( CVAR_wc3_races ) == 9 )
 	{
@@ -520,7 +530,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 	}
 
 	pos += format( szMenu[pos], 512-pos, "%L", id, "SELECT_RACE_FOOTER", i + 1 );
-	
+
 	// Add a cancel button to the bottom
 	if ( get_pcvar_num( CVAR_wc3_races ) != 9 )
 	{
@@ -528,7 +538,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 
 		pos += format( szMenu[pos], 512-pos, "^n\w0. %L", id, "WORD_CANCEL" );
 	}
-	
+
 	// Show the menu to the user!
 	show_menu( id, iKeys, szMenu, -1 );
 
@@ -550,12 +560,11 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 
 public _MENU_ChangeRace( id, key )
 {
-
 	if ( !WC3_Check() )
 	{
 		return PLUGIN_HANDLED;
 	}
-	
+
 	// User pressed 0 (cancel)
 	if ( get_pcvar_num( CVAR_wc3_races ) < 9 && key - 1 == get_pcvar_num( CVAR_wc3_races ) )
 	{
@@ -566,18 +575,17 @@ public _MENU_ChangeRace( id, key )
 	DB_SaveXP( id, false );
 
 	new iRace, iAutoSelectKey = KEY_0;
-	
+
 	if ( get_pcvar_num( CVAR_wc3_races ) != 9 )
 	{
 		iAutoSelectKey = get_pcvar_num( CVAR_wc3_races )
 	}
-	
+
 	// Auto select a race
 	if ( key == iAutoSelectKey )
 	{
 		iRace = random_num( 1, get_pcvar_num( CVAR_wc3_races ) );
 	}
-
 	// Otherwise race is set
 	else
 	{
@@ -587,16 +595,15 @@ public _MENU_ChangeRace( id, key )
 	// User currently has a race
 	if ( p_data[id][P_RACE] != 0 )
 	{
-
 		// Change the user's race at the start of next round
 		if ( iRace != p_data[id][P_RACE] )
 		{
-			
+
 			// Special message for csdm
 			if ( CVAR_csdm_active > 0 && get_pcvar_num( CVAR_csdm_active ) == 1 )
 			{
 				client_print( id, print_center, "Your race will be changed when you respawn" );
-			}	
+			}
 			else
 			{
 				client_print( id, print_center, "%L", id, "CENTER_CHANGED_NEXT" );
@@ -611,7 +618,6 @@ public _MENU_ChangeRace( id, key )
 			p_data[id][P_CHANGERACE] = 0;
 		}
 	}
-
 	// User doesn't have a race so give it to him!!!
 	else
 	{
@@ -623,7 +629,6 @@ public _MENU_ChangeRace( id, key )
 
 public MENU_ReplaceItem( id )
 {
-
 	new szMenu[512] = "", pos = 0;
 	new iKeys = (1<<9)|(1<<0)|(1<<1);
 
@@ -681,7 +686,6 @@ public _menu_ReplaceItem( id, iKey )
 
 public MENU_Shopmenu( id, iStart )
 {
-
 	if ( !ITEM_MenuCanBuyCheck( id ) )
 	{
 		return;
@@ -701,7 +705,6 @@ public MENU_Shopmenu( id, iStart )
 	{
 		pos += format( szMenu[pos], 511-pos, "%L", id, "MENU_BUY_ITEM" );
 	}
-
 	// "Shopmenu 2"
 	else if ( iStart == MAX_PAGE_ITEMS )
 	{
@@ -720,7 +723,6 @@ public MENU_Shopmenu( id, iStart )
 		{
 			pos += format( szMenu[pos], 511-pos, "\d%d. %s\y\R%d^n", i + 1, szItemName, ITEM_Cost( id, iItemID ) );
 		}
-
 		// Everything else is allowed!
 		else
 		{
@@ -755,7 +757,7 @@ public _MENU_Shopmenu2( id, iKey )
 	}
 
 	iKey += MAX_PAGE_ITEMS;
-	
+
 	ITEM_Buy( id, iKey );
 
 	return PLUGIN_HANDLED;
@@ -763,7 +765,6 @@ public _MENU_Shopmenu2( id, iKey )
 
 public MENU_SelectSkill( id )
 {
-
 	// User has no race, how can we select skills?!?
 	if ( p_data[id][P_RACE] == 0 )
 	{
@@ -772,7 +773,6 @@ public MENU_SelectSkill( id )
 
 		return;
 	}
-
 	// They don't choose skills when it's random
 	else if ( p_data[id][P_RACE] == RACE_CHAMELEON && get_pcvar_num( CVAR_wc3_cham_random ) )
 	{
@@ -786,7 +786,6 @@ public MENU_SelectSkill( id )
 	new iSkillsUsed = SM_TotalSkillPointsUsed( id );
 	if ( iSkillsUsed >= p_data[id][P_LEVEL] )
 	{
-
 		//set_hudmessage(200, 100, 0, -1.0, 0.3, 0, 1.0, 5.0, 0.1, 0.2, 2)
 		WC3_StatusText( id, TXT_TOP_CENTER, "%L", id, "ALREADY_SELECTED_SKILL_POINTS" );
 
@@ -801,7 +800,7 @@ public MENU_SelectSkill( id )
 		{
 			return;
 		}
-		
+
 		// Keep giving the bot a random ID until we are full!
 		while ( iSkillsUsed < p_data[id][P_LEVEL] )
 		{
@@ -828,7 +827,7 @@ public MENU_SelectSkill( id )
 		iSkillLevel = SM_GetSkillLevel( id, iSkillID, 4 );
 
 		LANG_GetSkillName( iSkillID , id, szSkillName, 63, 1 );
-		
+
 		// Add the trainable skills to the menu
 		if ( SM_GetSkillType( iSkillID ) == SKILL_TYPE_TRAINABLE )
 		{
@@ -852,7 +851,7 @@ public MENU_SelectSkill( id )
 				pos += formatex( szMsg[pos], 512-pos, "^n%d. %s %L %d\w", iSkillCounter+1, szSkillName, id, "WORD_LEVEL", iSkillLevel + 1 );
 			}
 		}
-		
+
 		// Add the ultimate to the menu
 		else if ( SM_GetSkillType( iSkillID ) == SKILL_TYPE_ULTIMATE )
 		{
@@ -890,7 +889,6 @@ public MENU_SelectSkill( id )
 
 public _MENU_SelectSkill( id, iKey )
 {
-
 	if ( !WC3_Check() || iKey == 9 )
 	{
 		return PLUGIN_HANDLED;
@@ -901,9 +899,9 @@ public _MENU_SelectSkill( id, iKey )
 
 	// Set up the skill!
 	SM_SetSkill( id, iSkillID );
-	
+
 	new iSkillsUsed = SM_TotalSkillPointsUsed( id );
-	
+
 	// Then they have another skill to select!!
 	if ( iSkillsUsed < p_data[id][P_LEVEL] )
 	{
